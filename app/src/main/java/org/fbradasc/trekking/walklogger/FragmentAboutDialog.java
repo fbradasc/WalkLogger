@@ -1,6 +1,9 @@
-/**
+/*
  * FragmentAboutDialog - Java Class for Android
- * Created by G.Capelli (BasicAirData) on 26/7/2016
+ * Created by G.Capelli on 26/7/2016
+ * This file is part of BasicAirData GPS Logger
+ *
+ * Copyright (C) 2011 BasicAirData
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,59 +26,74 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.appcompat.app.AlertDialog;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * The About Dialog Fragment
+ */
 public class FragmentAboutDialog extends DialogFragment {
 
-    TextView TVVersion;
-    TextView TVDescription;
+    private static final String COPYRIGHT_RANGE_END = "2022";           // The number that appears as end-year of the Copyright range
 
     //@SuppressLint("InflateParams")
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        final int APP_ORIGIN_NOT_SPECIFIED     = 0;
+        final int APP_ORIGIN_GOOGLE_PLAY_STORE = 1;       // The app has been installed from Google Play Store
+
+        TextView tvVersion;
+        TextView tvDescription;
 
         AlertDialog.Builder createAboutAlert = new AlertDialog.Builder(getActivity(), R.style.MyMaterialThemeAbout);
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View view = inflater.inflate(R.layout.fragment_about_dialog, null);
 
-        final GPSApplication app = GPSApplication.getInstance();
+        final GPSApplication gpsApp = GPSApplication.getInstance();
 
-        TVVersion = (TextView) view.findViewById(R.id.id_about_textView_Version);
+        tvVersion = view.findViewById(R.id.id_about_textView_Version);
         String versionName = BuildConfig.VERSION_NAME;
-        TVVersion.setText(getString(R.string.about_version) + " " + versionName);
+        tvVersion.setText(getString(R.string.about_version) + " " + versionName);
 
-        TVDescription = (TextView) view.findViewById(R.id.id_about_textView_description);
-        switch (app.getAppOrigin()) {
-            case GPSApplication.APP_ORIGIN_NOT_SPECIFIED:
-                TVDescription.setText(getString(R.string.about_description));
-                break;
-            case GPSApplication.APP_ORIGIN_GOOGLE_PLAY_STORE:
-                TVDescription.setText(getString(R.string.about_description_googleplaystore));
-                break;
+        tvDescription = view.findViewById(R.id.id_about_textView_description);
+        tvDescription.setText(getString(R.string.about_description, COPYRIGHT_RANGE_END));
+
+        int appOrigin = APP_ORIGIN_NOT_SPECIFIED;            // Which package manager is used to install this app (for Rate button visualization):
+                                                             // APP_ORIGIN_NOT_SPECIFIED, APP_ORIGIN_GOOGLE_PLAY_STORE
+        // Determine the app installation source
+        try {
+            String installer;
+            installer = gpsApp.getApplicationContext().getPackageManager().getInstallerPackageName(gpsApp.getApplicationContext().getPackageName());
+            if (installer.equals("com.android.vending") || installer.equals("com.google.android.feedback"))
+                appOrigin = APP_ORIGIN_GOOGLE_PLAY_STORE;                               // App installed from Google Play Store
+            //else appOrigin = APP_ORIGIN_NOT_SPECIFIED;                                  // Otherwise
+        } catch (Exception e) {
+            Log.w("myApp", "[#] GPSApplication.java - Exception trying to determine the package installer");
+            appOrigin = APP_ORIGIN_NOT_SPECIFIED;
         }
 
-        createAboutAlert.setView(view).setPositiveButton(R.string.about_ok, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int id) {}
-            });
-
-        if (app.getAppOrigin() != GPSApplication.APP_ORIGIN_NOT_SPECIFIED) {
-            createAboutAlert.setView(view).setNegativeButton(R.string.about_rate_this_app, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int id) {
-                    if (app.getAppOrigin() == GPSApplication.APP_ORIGIN_GOOGLE_PLAY_STORE) {
+        switch (appOrigin) {
+            case APP_ORIGIN_GOOGLE_PLAY_STORE:
+                tvDescription.setText(tvDescription.getText() + "\n\n" + getString(R.string.about_description_googleplaystore));
+                createAboutAlert.setView(view).setNegativeButton(R.string.about_rate_this_app, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
                         boolean marketfailed = false;
                         try {
                             getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + BuildConfig.APPLICATION_ID)));
                         } catch (Exception e) {
-                            // Unable to start the Google Play app for rating
+                            // Unable to start the Google Play gpsApp for rating
                             marketfailed = true;
                         }
                         if (marketfailed) {
@@ -87,9 +105,16 @@ public class FragmentAboutDialog extends DialogFragment {
                             }
                         }
                     }
-                }
-            });
+                });
+                break;
+            default:
+                break;
         }
+
+        createAboutAlert.setView(view).setPositiveButton(R.string.about_ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int id) {}
+            });
 
         return createAboutAlert.create();
     }

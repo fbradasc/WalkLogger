@@ -31,11 +31,11 @@ public class EventBusMSG {
     static final short ADD_PLACEMARK                    =   9;  // The placemark is available
     static final short APPLY_SETTINGS                   =  10;  // The new settings must be applied
     static final short TOAST_TRACK_EXPORTED             =  11;  // The exporter has finished to export the track, shows toast
-    static final short TOAST_STORAGE_PERMISSION_REQUIRED=  12;  // The Storage permission is required
     static final short UPDATE_JOB_PROGRESS              =  13;  // Update the progress of the current Job
     static final short NOTIFY_TRACKS_DELETED            =  14;  // Notify that some tracks are deleted
     static final short UPDATE_ACTIONBAR                 =  15;  // Notify that the actionbar must be updated
     static final short REFRESH_TRACKLIST                =  16;  // Refresh the tracklist, without update it from DB
+    static final short REFRESH_TRACKTYPE                =  17;  // Refresh the track type on the Edit Details dialog
 
     static final short DELETE_TRACK                     =  20;  // Delete the track (given id)
     static final short EXPORT_TRACK                     =  21;  // Export the track (given id)
@@ -51,6 +51,7 @@ public class EventBusMSG {
     static final short SHARE_PLACEMARKS                 =  40;  // Share the track's placemarks (given id)
     static final short INTENT_SEND_PLACEMARKS           =  41;  // Request to
     static final short TRACKLIST_RANGE_SELECTION        =  42;  // Select/Deselect a range of tracks
+    static final short ACTION_EDIT_TRACK                =  45;  // Edit the selected track
 
     static final short ACTION_BULK_DELETE_TRACKS        =  50;  // Delete the selected tracks
     static final short ACTION_BULK_EXPORT_TRACKS        =  51;  // Export the selected tracks

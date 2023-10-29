@@ -1,6 +1,9 @@
-/**
+/*
  * FragmentPlacemarkDialog - Java Class for Android
- * Created by G.Capelli (BasicAirData) on 9/7/2016
+ * Created by G.Capelli on 9/7/2016
+ * This file is part of BasicAirData GPS Logger
+ *
+ * Copyright (C) 2011 BasicAirData
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +43,7 @@ import org.greenrobot.eventbus.EventBus;
 
 public class FragmentPlacemarkDialog extends DialogFragment implements View.OnClickListener {
 
-    EditText DescEditText;
+    EditText etDescription;
     EditText Film_Data_EditText;
     EditText P_Data_Sv_EditText;
     EditText P_Data_Ev_EditText;
@@ -92,7 +95,7 @@ public class FragmentPlacemarkDialog extends DialogFragment implements View.OnCl
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View view = (View) inflater.inflate(R.layout.fragment_placemark_dialog, null);
 
-        DescEditText       = (EditText   ) view.findViewById(R.id.placemark_description);
+        etDescription      = (EditText   ) view.findViewById(R.id.placemark_description);
         Film_Data_EditText = (EditText   ) view.findViewById(R.id.film_data);
         P_Data_Sv_EditText = (EditText   ) view.findViewById(R.id.pdata_speed);
         P_Data_Ev_EditText = (EditText   ) view.findViewById(R.id.pdata_ev);
@@ -135,7 +138,7 @@ public class FragmentPlacemarkDialog extends DialogFragment implements View.OnCl
                     if (!mP_Data_Tv.isEmpty()) P_Data_Tv_EditText.setText(mP_Data_Tv);
                     if (!mP_Data_Av.isEmpty()) P_Data_Av_EditText.setText(mP_Data_Av);
                     if (!mP_Data_Fv.isEmpty()) P_Data_Fv_EditText.setText(mP_Data_Fv);
-                    if (!mDesc     .isEmpty()) DescEditText      .setText(mDesc     );
+                    if (!mDesc     .isEmpty()) etDescription     .setText(mDesc     );
 
                     RG_ZoneSystem.clearCheck();
 
@@ -180,7 +183,7 @@ public class FragmentPlacemarkDialog extends DialogFragment implements View.OnCl
                             mP_Data_Av = P_Data_Av_EditText.getText().toString().trim();
                             mP_Data_Fv = P_Data_Fv_EditText.getText().toString().trim();
                             mP_Data_Sv = P_Data_Sv_EditText.getText().toString().trim();
-                            mDesc      = DescEditText      .getText().toString().trim();
+                            mDesc      = etDescription     .getText().toString().trim();
                             mP_Data_ZS = "";
 
                             switch (RG_ZoneSystem.getCheckedRadioButtonId())
@@ -199,7 +202,7 @@ public class FragmentPlacemarkDialog extends DialogFragment implements View.OnCl
                                 default           : mP_Data_ZS = ""    ; break;
                             }
 
-                            String PlacemarkDescription =
+                            String placemarkDescription =
                                     mFilm_Data + "\n" +
                                     mP_Data_Sv + ","  +
                                     mP_Data_Ev + ","  +
@@ -208,10 +211,10 @@ public class FragmentPlacemarkDialog extends DialogFragment implements View.OnCl
                                     mP_Data_Av + ","  +
                                     mP_Data_Fv + "\n" +
                                     mDesc;
-                            final GPSApplication GlobalVariables = (GPSApplication) getActivity().getApplicationContext();
-                            GlobalVariables.setPlacemarkDescription(PlacemarkDescription.trim());
+                            final GPSApplication gpsApp = GPSApplication.getInstance();
+                            gpsApp.setPlacemarkDescription(placemarkDescription.trim());
                             EventBus.getDefault().post(EventBusMSG.ADD_PLACEMARK);
-                            //Log.w("myApp", "[#] FragmentPlacemarkDialog.java - posted ADD_PLACEMARK: " + PlacemarkDescription);
+                            //Log.w("myApp", "[#] FragmentPlacemarkDialog.java - posted ADD_PLACEMARK: " + placemarkDescription);
                         }
                     }
                 })

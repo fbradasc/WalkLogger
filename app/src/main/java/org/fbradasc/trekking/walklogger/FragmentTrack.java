@@ -1,6 +1,9 @@
-/**
+/*
  * FragmentTrack - Java Class for Android
- * Created by G.Capelli (BasicAirData) on 4/6/2016
+ * Created by G.Capelli on 4/6/2016
+ * This file is part of BasicAirData GPS Logger
+ *
+ * Copyright (C) 2011 BasicAirData
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +21,17 @@
 
 package org.fbradasc.trekking.walklogger;
 
+import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
@@ -30,44 +39,56 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+/**
+ * The Fragment that displays the information of the current Track
+ * on the second tab (Track) of the main Activity (GPSActivity).
+ */
 public class FragmentTrack extends Fragment {
 
     private PhysicalDataFormatter phdformatter = new PhysicalDataFormatter();
+    final GPSApplication gpsApp = GPSApplication.getInstance();
 
-    private TextView TVDuration;
-    private TextView TVTrackName;
-    private TextView TVTrackID;
-    private TextView TVDistance;
-    private TextView TVDistanceUM;
-    private TextView TVMaxSpeed;
-    private TextView TVMaxSpeedUM;
-    private TextView TVAverageSpeed;
-    private TextView TVAverageSpeedUM;
-    private TextView TVAltitudeGap;
-    private TextView TVAltitudeGapUM;
-    private TextView TVAltitudeMin;
-    private TextView TVAltitudeMinUM;
-    private TextView TVAltitudeMax;
-    private TextView TVAltitudeMaxUM;
-    private TextView TVAltitudeUp;
-    private TextView TVAltitudeUpUM;
-    private TextView TVAltitudeDown;
-    private TextView TVAltitudeDownUM;
-    private TextView TVOverallDirection;
-    private TextView TVTrackStatus;
-    private TextView TVDirectionUM;
+    private FrameLayout flTrack;
 
-    private TableLayout TLTrack;
-    private TableLayout TLDuration;
-    private TableLayout TLSpeedMax;
-    private TableLayout TLSpeedAvg;
-    private TableLayout TLDistance;
-    private TableLayout TLAltitudeGap;
-    private TableLayout TLAltitudeMin;
-    private TableLayout TLAltitudeMax;
-    private TableLayout TLAltitudeUp;
-    private TableLayout TLAltitudeDown;
-    private TableLayout TLOverallDirection;
+    private TextView tvDuration;
+    private TextView tvTrackName;
+    private TextView tvTrackID;
+    private TextView tvDistance;
+    private TextView tvDistanceUM;
+    private TextView tvAnnotations;
+    private TextView tvTrackpoints;
+    private TextView tvMaxSpeed;
+    private TextView tvMaxSpeedUM;
+    private TextView tvAverageSpeed;
+    private TextView tvAverageSpeedUM;
+    private TextView tvAltitudeGap;
+    private TextView tvAltitudeGapUM;
+    private TextView tvAltitudeMin;
+    private TextView tvAltitudeMinUM;
+    private TextView tvAltitudeMax;
+    private TextView tvAltitudeMaxUM;
+    private TextView tvAltitudeUp;
+    private TextView tvAltitudeUpUM;
+    private TextView tvAltitudeDown;
+    private TextView tvAltitudeDownUM;
+    private TextView tvOverallDirection;
+    private TextView tvTrackStatus;
+    private TextView tvDirectionUM;
+    private TableLayout tlTrack;
+    private TableLayout tlTrackpoints;
+    private TableLayout tlAnnotations;
+    private TableLayout tlDuration;
+    private TableLayout tlSpeedMax;
+    private TableLayout tlSpeedAvg;
+    private TableLayout tlDistance;
+    private TableLayout tlAltitudeGap;
+    private TableLayout tlAltitudeMin;
+    private TableLayout tlAltitudeMax;
+    private TableLayout tlAltitudeUp;
+    private TableLayout tlAltitudeDown;
+    private TableLayout tlOverallDirection;
+
+    private LinearLayout llTrackpointsAnnotations;
 
     private PhysicalData phdDuration;
     private PhysicalData phdSpeedMax;
@@ -80,21 +101,50 @@ public class FragmentTrack extends Fragment {
     private PhysicalData phdAltitudeDown;
     private PhysicalData phdOverallDirection;
 
-    private String FTrackID = "";
-    private String FTrackName = "";
+    private String fTrackID = "";
+    private String fTrackName = "";
+    private Track track;
+    private int prefDirections;
+    private boolean EGMAltitudeCorrection;
+    private boolean isValidAltitude;
 
-    final GPSApplication gpsApplication = GPSApplication.getInstance();
-
+    /**
+     * The Observer that calculate the new available height when the layout is changed.
+     * If the height is enough, it set the setSpaceForExtraTilesAvailable flag
+     * that enable the visualization of the extra tiles:
+     * <ul>
+     *     <li>Time and Satellites for FragmentGPSFix</li>
+     *     <li>Trackpoints ane Annotation for FragmentTrack</li>
+     *  * </ul>
+     */
+    ViewTreeObserver.OnGlobalLayoutListener viewTreeObserverOnGLL = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                flTrack.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+            } else {
+                flTrack.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+            //int width  = flTrack.getMeasuredWidth();
+            //int height = flTrack.getMeasuredHeight();
+            //Log.w("myApp", "[#] FragmentTrack MEASURED: " + width + " x " + height);
+            int viewHeight   = tlDistance.getMeasuredHeight() + (int)(6*getResources().getDisplayMetrics().density);
+            int layoutHeight = flTrack.getHeight() - (int)(6*getResources().getDisplayMetrics().density);
+            boolean isTimeAndSatellitesVisible;
+            if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
+                isTimeAndSatellitesVisible = layoutHeight >= 6*viewHeight;
+                //Log.w("myApp", "[#] FragmentTrack MEASURED: " + layoutHeight + " / " + 6*viewHeight + " -> " + isTimeAndSatellitesVisible);
+            } else {
+                isTimeAndSatellitesVisible = layoutHeight >= 3.9*viewHeight;
+                //Log.w("myApp", "[#] FragmentTrack MEASURED: " + layoutHeight + " / " + 3.9*viewHeight + " -> " + isTimeAndSatellitesVisible);
+            }
+            GPSApplication.getInstance().setSpaceForExtraTilesAvailable(isTimeAndSatellitesVisible);
+            update();
+        }
+    };
 
     public FragmentTrack() {
         // Required empty public constructor
-    }
-
-    @Subscribe (threadMode = ThreadMode.MAIN)
-    public void onEvent(Short msg) {
-        if (msg == EventBusMSG.UPDATE_TRACK) {
-            Update();
-        }
     }
 
     @Override
@@ -103,43 +153,54 @@ public class FragmentTrack extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_track, container, false);
 
+        // FrameLayouts
+        flTrack = view.findViewById(R.id.id_fragmenttrackFrameLayout);
+
         // TextViews
-        TVDuration          = view.findViewById(R.id.id_textView_Duration);
-        TVTrackID           = view.findViewById(R.id.id_textView_TrackIDLabel);
-        TVTrackName         = view.findViewById(R.id.id_textView_TrackName);
-        TVDistance          = view.findViewById(R.id.id_textView_Distance);
-        TVMaxSpeed          = view.findViewById(R.id.id_textView_SpeedMax);
-        TVAverageSpeed      = view.findViewById(R.id.id_textView_SpeedAvg);
-        TVAltitudeGap       = view.findViewById(R.id.id_textView_AltitudeGap);
-        TVAltitudeMin       = view.findViewById(R.id.id_textView_AltitudeMin);
-        TVAltitudeMax       = view.findViewById(R.id.id_textView_AltitudeMax);
-        TVAltitudeUp        = view.findViewById(R.id.id_textView_AltitudeUp);
-        TVAltitudeDown      = view.findViewById(R.id.id_textView_AltitudeDown);
-        TVOverallDirection  = view.findViewById(R.id.id_textView_OverallDirection);
-        TVTrackStatus       = view.findViewById(R.id.id_textView_TrackStatus);
-        TVDirectionUM       = view.findViewById(R.id.id_textView_OverallDirectionUM);
-        TVDistanceUM        = view.findViewById(R.id.id_textView_DistanceUM);
-        TVMaxSpeedUM        = view.findViewById(R.id.id_textView_SpeedMaxUM);
-        TVAverageSpeedUM    = view.findViewById(R.id.id_textView_SpeedAvgUM);
-        TVAltitudeGapUM     = view.findViewById(R.id.id_textView_AltitudeGapUM);
-        TVAltitudeMinUM     = view.findViewById(R.id.id_textView_AltitudeMinUM);
-        TVAltitudeMaxUM     = view.findViewById(R.id.id_textView_AltitudeMaxUM);
-        TVAltitudeUpUM      = view.findViewById(R.id.id_textView_AltitudeUpUM);
-        TVAltitudeDownUM    = view.findViewById(R.id.id_textView_AltitudeDownUM);
+        tvDuration = view.findViewById(R.id.id_textView_Duration);
+        tvTrackID = view.findViewById(R.id.id_textView_TrackIDLabel);
+        tvTrackName = view.findViewById(R.id.id_textView_TrackName);
+        tvTrackpoints = view.findViewById(R.id.id_textView_Trackpoints);
+        tvAnnotations = view.findViewById(R.id.id_textView_Annotations);
+        tvDistance = view.findViewById(R.id.id_textView_Distance);
+        tvMaxSpeed = view.findViewById(R.id.id_textView_SpeedMax);
+        tvAverageSpeed = view.findViewById(R.id.id_textView_SpeedAvg);
+        tvAltitudeGap = view.findViewById(R.id.id_textView_AltitudeGap);
+        tvAltitudeMin = view.findViewById(R.id.id_textView_AltitudeMin);
+        tvAltitudeMax = view.findViewById(R.id.id_textView_AltitudeMax);
+        tvAltitudeUp = view.findViewById(R.id.id_textView_AltitudeUp);
+        tvAltitudeDown = view.findViewById(R.id.id_textView_AltitudeDown);
+        tvOverallDirection = view.findViewById(R.id.id_textView_OverallDirection);
+        tvTrackStatus = view.findViewById(R.id.id_textView_TrackStatus);
+        tvDirectionUM = view.findViewById(R.id.id_textView_OverallDirectionUM);
+        tvDistanceUM = view.findViewById(R.id.id_textView_DistanceUM);
+        tvMaxSpeedUM = view.findViewById(R.id.id_textView_SpeedMaxUM);
+        tvAverageSpeedUM = view.findViewById(R.id.id_textView_SpeedAvgUM);
+        tvAltitudeGapUM = view.findViewById(R.id.id_textView_AltitudeGapUM);
+        tvAltitudeMinUM     = view.findViewById(R.id.id_textView_AltitudeMinUM);
+        tvAltitudeMaxUM     = view.findViewById(R.id.id_textView_AltitudeMaxUM);
+        tvAltitudeUpUM      = view.findViewById(R.id.id_textView_AltitudeUpUM);
+        tvAltitudeDownUM    = view.findViewById(R.id.id_textView_AltitudeDownUM);
 
         // TableLayouts
-        TLTrack             = view.findViewById(R.id.id_tableLayout_TrackName);
-        TLDuration          = view.findViewById(R.id.id_tableLayout_Duration);
-        TLSpeedMax          = view.findViewById(R.id.id_tableLayout_SpeedMax);
-        TLDistance          = view.findViewById(R.id.id_tableLayout_Distance);
-        TLSpeedAvg          = view.findViewById(R.id.id_tableLayout_SpeedAvg);
-        TLAltitudeGap       = view.findViewById(R.id.id_tableLayout_AltitudeGap);
-        TLAltitudeMin       = view.findViewById(R.id.id_tableLayout_AltitudeMin);
-        TLAltitudeMax       = view.findViewById(R.id.id_tableLayout_AltitudeMax);
-        TLAltitudeUp        = view.findViewById(R.id.id_tableLayout_AltitudeUp);
-        TLAltitudeDown      = view.findViewById(R.id.id_tableLayout_AltitudeDown);
-        TLOverallDirection  = view.findViewById(R.id.id_tableLayout_OverallDirection) ;
+        tlTrack = view.findViewById(R.id.id_tableLayout_TrackName) ;
+        tlTrackpoints = view.findViewById(R.id.id_TableLayout_Trackpoints) ;
+        tlAnnotations = view.findViewById(R.id.id_TableLayout_Annotations) ;
+        tlDuration = view.findViewById(R.id.id_tableLayout_Duration) ;
+        tlSpeedMax = view.findViewById(R.id.id_tableLayout_SpeedMax) ;
+        tlDistance = view.findViewById(R.id.id_tableLayout_Distance) ;
+        tlSpeedAvg = view.findViewById(R.id.id_tableLayout_SpeedAvg) ;
+        tlAltitudeGap = view.findViewById(R.id.id_tableLayout_AltitudeGap) ;
+        tlAltitudeMin = view.findViewById(R.id.id_tableLayout_AltitudeMin);
+        tlAltitudeMax = view.findViewById(R.id.id_tableLayout_AltitudeMax);
+        tlAltitudeUp = view.findViewById(R.id.id_tableLayout_AltitudeUp);
+        tlAltitudeDown = view.findViewById(R.id.id_tableLayout_AltitudeDown);
+        tlOverallDirection = view.findViewById(R.id.id_tableLayout_OverallDirection) ;
 
+        // LinearLayouts
+        llTrackpointsAnnotations = view.findViewById(R.id.id_linearLayout_Annotation_Trackpoints);
+
+        tvTrackStatus.setText(getString(R.string.track_empty) + "\n\n" + getString(R.string.track_start_with_button_below));
         return view;
     }
 
@@ -148,38 +209,58 @@ public class FragmentTrack extends Fragment {
         super.onResume();
 
         // Workaround for Nokia Devices, Android 9
-        // https://github.com/BasicAirData/WalkLogger/issues/77
+        // https://github.com/BasicAirData/GPSLogger/issues/77
         if (EventBus.getDefault().isRegistered(this)) {
             //Log.w("myApp", "[#] FragmentTrack.java - EventBus: FragmentTrack already registered");
             EventBus.getDefault().unregister(this);
         }
 
         EventBus.getDefault().register(this);
-        Update();
+
+        ViewTreeObserver vto = flTrack.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(viewTreeObserverOnGLL);
+
+        update();
     }
 
     @Override
     public void onPause() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            flTrack.getViewTreeObserver().removeGlobalOnLayoutListener(viewTreeObserverOnGLL);
+        } else {
+            flTrack.getViewTreeObserver().removeOnGlobalLayoutListener(viewTreeObserverOnGLL);
+        }
         EventBus.getDefault().unregister(this);
         super.onPause();
     }
 
+    /**
+     * The EventBus receiver for Short Messages.
+     */
+    @Subscribe (threadMode = ThreadMode.MAIN)
+    public void onEvent(Short msg) {
+        if (msg == EventBusMSG.UPDATE_TRACK) {
+            update();
+        }
+    }
 
-    private Track track;
-    private int prefDirections;
-    private boolean EGMAltitudeCorrection;
-    private boolean isValidAltitude;
-
-    public void Update() {
-        track = gpsApplication.getCurrentTrack();
-        prefDirections = gpsApplication.getPrefShowDirections();
-        EGMAltitudeCorrection = gpsApplication.getPrefEGM96AltitudeCorrection();
+    /**
+     * Updates the user interface of the fragment.
+     * It takes care of visibility and value of each tile, and Track Status widgets.
+     */
+    public void update() {
+        //Log.w("myApp", "[#] FragmentTrack.java - Update");
+        track = gpsApp.getCurrentTrack();
+        prefDirections = gpsApp.getPrefShowDirections();
+        EGMAltitudeCorrection = gpsApp.getPrefEGM96AltitudeCorrection();
 
         if (isAdded()) {
             if ((track != null) && (track.getNumberOfItems() > 0)) {
 
-                FTrackID = getString(R.string.track_id) + " " + String.valueOf(track.getId());
-                FTrackName = track.getName();
+                fTrackID = (track.getDescription().isEmpty() ?
+                        getString(R.string.track_id) + " " + String.valueOf(track.getId()) :
+                        track.getDescription());
+                fTrackName = track.getName();
                 phdDuration = phdformatter.format(track.getPrefTime(),PhysicalDataFormatter.FORMAT_DURATION);
                 phdSpeedMax = phdformatter.format(track.getSpeedMax(),PhysicalDataFormatter.FORMAT_SPEED);
                 phdSpeedAvg = phdformatter.format(track.getPrefSpeedAverage(),PhysicalDataFormatter.FORMAT_SPEED_AVG);
@@ -191,71 +272,78 @@ public class FragmentTrack extends Fragment {
                 phdAltitudeDown = phdformatter.format(track.getEstimatedAltitudeDown(EGMAltitudeCorrection),PhysicalDataFormatter.FORMAT_ALTITUDE);
                 phdOverallDirection = phdformatter.format(track.getBearing(),PhysicalDataFormatter.FORMAT_BEARING);
 
-                TVTrackID.setText(FTrackID);
-                TVTrackName.setText(FTrackName);
-                TVDuration.setText(phdDuration.Value);
-                TVMaxSpeed.setText(phdSpeedMax.Value);
-                TVAverageSpeed.setText(phdSpeedAvg.Value);
-                TVDistance.setText(phdDistance.Value);
-                TVAltitudeGap.setText(phdAltitudeGap.Value);
-                TVAltitudeMin.setText(phdAltitudeMin.Value);
-                TVAltitudeMax.setText(phdAltitudeMax.Value);
-                TVAltitudeUp.setText(phdAltitudeUp.Value);
-                TVAltitudeDown.setText(phdAltitudeDown.Value);
-                TVOverallDirection.setText(phdOverallDirection.Value);
+                tvTrackID.setText(fTrackID);
+                tvTrackName.setText(fTrackName);
+                tvDuration.setText(phdDuration.value);
+                tvMaxSpeed.setText(phdSpeedMax.value);
+                tvAverageSpeed.setText(phdSpeedAvg.value);
+                tvDistance.setText(phdDistance.value);
+                tvAltitudeGap.setText(phdAltitudeGap.value);
+                tvAltitudeMin.setText(phdAltitudeMin.Value);
+                tvAltitudeMax.setText(phdAltitudeMax.Value);
+                tvAltitudeUp.setText(phdAltitudeUp.Value);
+                tvAltitudeDown.setText(phdAltitudeDown.Value);
+                tvOverallDirection.setText(phdOverallDirection.value);
 
-                TVMaxSpeedUM.setText(phdSpeedMax.UM);
-                TVAverageSpeedUM.setText(phdSpeedAvg.UM);
-                TVDistanceUM.setText(phdDistance.UM);
-                TVAltitudeGapUM.setText(phdAltitudeGap.UM);
-                TVAltitudeMinUM.setText(phdAltitudeMin.UM);
-                TVAltitudeMaxUM.setText(phdAltitudeMax.UM);
-                TVAltitudeUpUM.setText(phdAltitudeUp.UM);
-                TVAltitudeDownUM.setText(phdAltitudeDown.UM);
+                tvMaxSpeedUM.setText(phdSpeedMax.um);
+                tvAverageSpeedUM.setText(phdSpeedAvg.um);
+                tvDistanceUM.setText(phdDistance.um);
+                tvAltitudeGapUM.setText(phdAltitudeGap.um);
+                tvAltitudeMinUM.setText(phdAltitudeMin.um);
+                tvAltitudeMaxUM.setText(phdAltitudeMax.um);
+                tvAltitudeUpUM.setText(phdAltitudeUp.um);
+                tvAltitudeDownUM.setText(phdAltitudeDown.um);
+
+                llTrackpointsAnnotations.setVisibility(gpsApp.isSpaceForExtraTilesAvailable() ? View.VISIBLE : View.GONE);
+
+                tvAnnotations.setText(String.valueOf(track.getNumberOfPlacemarks()));
+                tvTrackpoints.setText(String.valueOf(track.getNumberOfLocations()));
 
                 // Colorize the Altitude Gap textview depending on the altitude filter
                 isValidAltitude = track.isValidAltitude();
-                TVAltitudeGap.setTextColor(isValidAltitude ? getResources().getColor(R.color.textColorPrimary) : getResources().getColor(R.color.textColorSecondary));
-                TVAltitudeGapUM.setTextColor(isValidAltitude ? getResources().getColor(R.color.textColorPrimary) : getResources().getColor(R.color.textColorSecondary));
-                TVAltitudeMin.setTextColor(isValidAltitude ? getResources().getColor(R.color.textColorPrimary) : getResources().getColor(R.color.textColorSecondary));
-                TVAltitudeMinUM.setTextColor(isValidAltitude ? getResources().getColor(R.color.textColorPrimary) : getResources().getColor(R.color.textColorSecondary));
-                TVAltitudeMax.setTextColor(isValidAltitude ? getResources().getColor(R.color.textColorPrimary) : getResources().getColor(R.color.textColorSecondary));
-                TVAltitudeMaxUM.setTextColor(isValidAltitude ? getResources().getColor(R.color.textColorPrimary) : getResources().getColor(R.color.textColorSecondary));
-                TVAltitudeUp.setTextColor(isValidAltitude ? getResources().getColor(R.color.textColorPrimary) : getResources().getColor(R.color.textColorSecondary));
-                TVAltitudeUpUM.setTextColor(isValidAltitude ? getResources().getColor(R.color.textColorPrimary) : getResources().getColor(R.color.textColorSecondary));
-                TVAltitudeDown.setTextColor(isValidAltitude ? getResources().getColor(R.color.textColorPrimary) : getResources().getColor(R.color.textColorSecondary));
-                TVAltitudeDownUM.setTextColor(isValidAltitude ? getResources().getColor(R.color.textColorPrimary) : getResources().getColor(R.color.textColorSecondary));
+                tvAltitudeGap.setTextColor(isValidAltitude ? getResources().getColor(R.color.textColorPrimary) : getResources().getColor(R.color.textColorSecondary));
+                tvAltitudeGapUM.setTextColor(isValidAltitude ? getResources().getColor(R.color.textColorPrimary) : getResources().getColor(R.color.textColorSecondary));
+                tvAltitudeMin.setTextColor(isValidAltitude ? getResources().getColor(R.color.textColorPrimary) : getResources().getColor(R.color.textColorSecondary));
+                tvAltitudeMinUM.setTextColor(isValidAltitude ? getResources().getColor(R.color.textColorPrimary) : getResources().getColor(R.color.textColorSecondary));
+                tvAltitudeMax.setTextColor(isValidAltitude ? getResources().getColor(R.color.textColorPrimary) : getResources().getColor(R.color.textColorSecondary));
+                tvAltitudeMaxUM.setTextColor(isValidAltitude ? getResources().getColor(R.color.textColorPrimary) : getResources().getColor(R.color.textColorSecondary));
+                tvAltitudeUp.setTextColor(isValidAltitude ? getResources().getColor(R.color.textColorPrimary) : getResources().getColor(R.color.textColorSecondary));
+                tvAltitudeUpUM.setTextColor(isValidAltitude ? getResources().getColor(R.color.textColorPrimary) : getResources().getColor(R.color.textColorSecondary));
+                tvAltitudeDown.setTextColor(isValidAltitude ? getResources().getColor(R.color.textColorPrimary) : getResources().getColor(R.color.textColorSecondary));
+                tvAltitudeDownUM.setTextColor(isValidAltitude ? getResources().getColor(R.color.textColorPrimary) : getResources().getColor(R.color.textColorSecondary));
 
-                TVTrackStatus.setVisibility(View.INVISIBLE);
+                tvTrackStatus.setVisibility(View.INVISIBLE);
+                tvDirectionUM.setVisibility(prefDirections == 0 ? View.GONE : View.VISIBLE);
 
-                TVDirectionUM.setVisibility(prefDirections == 0 ? View.GONE : View.VISIBLE);
-
-                TLTrack.setVisibility(FTrackName.equals("") ? View.INVISIBLE : View.VISIBLE);
-                TLDuration.setVisibility(phdDuration.Value.equals("") ? View.INVISIBLE : View.VISIBLE);
-                TLSpeedMax.setVisibility(phdSpeedMax.Value.equals("") ? View.INVISIBLE : View.VISIBLE);
-                TLSpeedAvg.setVisibility(phdSpeedAvg.Value.equals("") ? View.INVISIBLE : View.VISIBLE);
-                TLDistance.setVisibility(phdDistance.Value.equals("") ? View.INVISIBLE : View.VISIBLE);
-                TLOverallDirection.setVisibility(phdOverallDirection.Value.equals("") ? View.INVISIBLE : View.VISIBLE);
-                TLAltitudeGap.setVisibility(phdAltitudeGap.Value.equals("") ? View.INVISIBLE : View.VISIBLE);
-                TLAltitudeMin.setVisibility(phdAltitudeMin.Value.equals("") ? View.INVISIBLE : View.VISIBLE);
-                TLAltitudeMax.setVisibility(phdAltitudeMax.Value.equals("") ? View.INVISIBLE : View.VISIBLE);
-                TLAltitudeUp.setVisibility(phdAltitudeUp.Value.equals("") ? View.INVISIBLE : View.VISIBLE);
-                TLAltitudeDown.setVisibility(phdAltitudeDown.Value.equals("") ? View.INVISIBLE : View.VISIBLE);
-
+                tlTrack.setVisibility(fTrackName.equals("") ? View.INVISIBLE : View.VISIBLE);
+                tlDuration.setVisibility(phdDuration.value.equals("") ? View.INVISIBLE : View.VISIBLE);
+                tlSpeedMax.setVisibility(phdSpeedMax.value.equals("") ? View.INVISIBLE : View.VISIBLE);
+                tlSpeedAvg.setVisibility(phdSpeedAvg.value.equals("") ? View.INVISIBLE : View.VISIBLE);
+                tlDistance.setVisibility(phdDistance.value.equals("") ? View.INVISIBLE : View.VISIBLE);
+                tlOverallDirection.setVisibility(phdOverallDirection.value.equals("") ? View.INVISIBLE : View.VISIBLE);
+                tlAltitudeGap.setVisibility(phdAltitudeGap.value.equals("") ? View.INVISIBLE : View.VISIBLE);
+                tlAltitudeMin.setVisibility(phdAltitudeMin.Value.equals("") ? View.INVISIBLE : View.VISIBLE);
+                tlAltitudeMax.setVisibility(phdAltitudeMax.Value.equals("") ? View.INVISIBLE : View.VISIBLE);
+                tlAltitudeUp.setVisibility(phdAltitudeUp.Value.equals("") ? View.INVISIBLE : View.VISIBLE);
+                tlAltitudeDown.setVisibility(phdAltitudeDown.Value.equals("") ? View.INVISIBLE : View.VISIBLE);
+                tlTrackpoints.setVisibility(track.getNumberOfLocations() > 0 ? View.VISIBLE : View.INVISIBLE);
+                tlAnnotations.setVisibility(track.getNumberOfPlacemarks() + track.getNumberOfLocations() > 0 ? View.VISIBLE : View.INVISIBLE);
             } else {
-                TVTrackStatus.setVisibility(View.VISIBLE);
+                tvTrackStatus.setVisibility(View.VISIBLE);
 
-                TLTrack.setVisibility(View.INVISIBLE);
-                TLDuration.setVisibility(View.INVISIBLE);
-                TLSpeedMax.setVisibility(View.INVISIBLE);
-                TLSpeedAvg.setVisibility(View.INVISIBLE);
-                TLDistance.setVisibility(View.INVISIBLE);
-                TLOverallDirection.setVisibility(View.INVISIBLE);
-                TLAltitudeGap.setVisibility(View.INVISIBLE);
-                TLAltitudeMin.setVisibility(View.INVISIBLE);
-                TLAltitudeMax.setVisibility(View.INVISIBLE);
-                TLAltitudeUp.setVisibility(View.INVISIBLE);
-                TLAltitudeDown.setVisibility(View.INVISIBLE);
+                tlTrack.setVisibility(View.INVISIBLE);
+                tlDuration.setVisibility(View.INVISIBLE);
+                tlSpeedMax.setVisibility(View.INVISIBLE);
+                tlSpeedAvg.setVisibility(View.INVISIBLE);
+                tlDistance.setVisibility(View.INVISIBLE);
+                tlOverallDirection.setVisibility(View.INVISIBLE);
+                tlAltitudeGap.setVisibility(View.INVISIBLE);
+                tlAltitudeMin.setVisibility(View.INVISIBLE);
+                tlAltitudeMax.setVisibility(View.INVISIBLE);
+                tlAltitudeUp.setVisibility(View.INVISIBLE);
+                tlAltitudeDown.setVisibility(View.INVISIBLE);
+                tlTrackpoints.setVisibility(View.INVISIBLE);
+                tlAnnotations.setVisibility(View.INVISIBLE);
             }
         }
     }

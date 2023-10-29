@@ -1,6 +1,9 @@
-/**
+/*
  * FragmentRecordingControls - Java Class for Android
- * Created by G.Capelli (BasicAirData) on 20/5/2016
+ * Created by G.Capelli on 20/5/2016
+ * This file is part of BasicAirData GPS Logger
+ *
+ * Copyright (C) 2011 BasicAirData
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +19,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+// TODO TODO TODO TODO TODO
 package org.fbradasc.trekking.walklogger;
 
 
@@ -102,12 +105,11 @@ public class FragmentRecordingControls extends Fragment{
         super.onResume();
 
         // Workaround for Nokia Devices, Android 9
-        // https://github.com/BasicAirData/WalkLogger/issues/77
+        // https://github.com/BasicAirData/GPSLogger/issues/77
         if (EventBus.getDefault().isRegistered(this)) {
             //Log.w("myApp", "[#] FragmentRecordingControls - EventBus: FragmentRecordingControls already registered");
             EventBus.getDefault().unregister(this);
         }
-
         EventBus.getDefault().register(this);
         Update();
     }
