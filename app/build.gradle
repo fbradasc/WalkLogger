@@ -1,6 +1,9 @@
-/**
+/*
  * build.gradle
- * Created by G.Capelli (BasicAirData) on 8/5/2016
+ * Created by G.Capelli on 8/5/2016
+ * This file is part of BasicAirData GPS Logger
+ *
+ * Copyright (C) 2011 BasicAirData
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,31 +22,19 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion '29.0.3'
+    compileSdkVersion 32
+    buildToolsVersion '32.0.0'
 
-    lintOptions {
-        disable 'MissingTranslation'
-        //checkReleaseBuilds false
-        // Or, if you prefer, you can continue to check for errors in release builds,
-        // but continue the build even when errors are found:
-        abortOnError false
-    }
-
-//    aaptOptions {
-//        // Disable PNG Crunching
-//        cruncherEnabled = false
-//    }
 
     defaultConfig {
         applicationId "org.fbradasc.trekking.walklogger"
         minSdkVersion 14
-        targetSdkVersion 29
+        targetSdkVersion 32
 
         // -----------------------------------------------------------------------------------------
         // We use the Semantic Versioning (https://semver.org/):
-        versionName '2.3.2'
-        versionCode 36
+        versionName '3.2.1'
+        versionCode 50
         // -----------------------------------------------------------------------------------------
 
         vectorDrawables.useSupportLibrary = true
@@ -58,6 +49,7 @@ android {
     buildTypes {
         debug {
             minifyEnabled false
+            crunchPngs false
             //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
@@ -66,21 +58,29 @@ android {
         }
         release {
             minifyEnabled false
+            crunchPngs false
             //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+
+    lint {
+        disable 'MissingTranslation'
+        abortOnError false
     }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
 
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'androidx.preference:preference:1.1.1'
-    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'androidx.preference:preference:1.2.0'
+    implementation 'com.google.android.material:material:1.7.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.5.1'
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
 
     implementation 'com.github.bumptech.glide:glide:3.8.0'
     implementation 'com.google.android.gms:play-services-base:16.1.0'
@@ -88,7 +88,6 @@ dependencies {
     implementation 'com.google.android.gms:play-services-wearable:16.0.1'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
 
-    def eventbus_version = '3.1.1'
-    implementation "org.greenrobot:eventbus:$eventbus_version"
-    annotationProcessor "org.greenrobot:eventbus-annotation-processor:$eventbus_version"
+    implementation "org.greenrobot:eventbus:3.3.1"
+    annotationProcessor "org.greenrobot:eventbus-annotation-processor:3.3.1"
 }

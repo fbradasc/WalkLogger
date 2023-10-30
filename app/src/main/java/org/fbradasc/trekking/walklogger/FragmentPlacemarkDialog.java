@@ -41,6 +41,9 @@ import android.widget.RadioGroup;
 
 import org.greenrobot.eventbus.EventBus;
 
+/**
+ * The dialog that appears when the user adds a new Annotation (Placemark).
+ */
 public class FragmentPlacemarkDialog extends DialogFragment implements View.OnClickListener {
 
     EditText etDescription;

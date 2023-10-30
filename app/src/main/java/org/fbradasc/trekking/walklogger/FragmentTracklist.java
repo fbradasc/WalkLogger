@@ -351,8 +351,8 @@ public class FragmentTracklist extends Fragment {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.dismiss();
                         GPSApplication.getInstance().setDeleteAlsoExportedFiles(false); // Don't delete exported files
-                        GPSApplication.getInstance().LoadJob(GPSApplication.JOB_TYPE_DELETE);
-                        GPSApplication.getInstance().ExecuteJob();
+                        GPSApplication.getInstance().loadJob(GPSApplication.JOB_TYPE_DELETE);
+                        GPSApplication.getInstance().executeJob();
                     }
                 });
                 builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {

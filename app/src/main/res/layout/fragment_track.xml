@@ -2,7 +2,10 @@
 
 <!--
   ~ fragment_track.xml
-  ~ Created by G.Capelli (BasicAirData) on 8/6/2016
+  ~ Created by G.Capelli on 8/6/2016
+  ~ This file is part of BasicAirData GPS Logger
+  ~
+  ~ Copyright (C) 2011 BasicAirData
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -44,23 +47,108 @@
         android:background="@drawable/rounded_corner">
 
         <TextView
+            android:id="@+id/id_textView_TrackName"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
             android:textAppearance="@style/TextAppearanceLargeNumbers"
-            android:id="@+id/id_textView_TrackName"
-            android:freezesText="true"
-            android:textColor="@color/colorPrimaryLight"
-            android:textStyle="bold"
-            android:gravity="center_horizontal" />
+            android:textColor="@color/colorPrimaryLight" />
 
         <TextView
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:id="@+id/id_textView_TrackIDLabel"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:layout_marginRight="50dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginStart="50dp"
             android:textSize="13sp"
             android:gravity="center_horizontal" />
     </TableLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:id="@+id/id_linearLayout_Annotation_Trackpoints"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
+            android:weightSum="2">
+
+            <TableLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/id_TableLayout_Trackpoints"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:layout_margin="3dp"
+                android:background="@drawable/rounded_corner">
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal">
+
+                    <TextView
+                        android:id="@+id/id_textView_Trackpoints"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorPrimaryLight"
+                        android:textAppearance="@style/TextAppearanceLargeNumbers" />
+                </TableRow>
+
+                <TextView
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="@string/trackpoints"
+                    android:id="@+id/id_textView_TrackpointsLabel"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="13sp"
+                    android:gravity="center_horizontal" />
+
+            </TableLayout>
+
+            <TableLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:id="@+id/id_TableLayout_Annotations"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:background="@drawable/rounded_corner"
+                android:layout_margin="3dp">
+
+                <TableRow
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal">
+
+                    <TextView
+                        android:id="@+id/id_textView_Annotations"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorPrimaryLight"
+                        android:textAppearance="@style/TextAppearanceLargeNumbers" />
+                </TableRow>
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="@string/annotations"
+                    android:id="@+id/id_textView_AnnotationsLabel"
+                    android:textSize="13sp"
+                    android:gravity="center_horizontal" />
+
+            </TableLayout>
+
+        </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
@@ -81,13 +169,12 @@
             android:baselineAligned="false">
 
             <TextView
+                android:id="@+id/id_textView_Duration"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearanceLargeNumbers"
-                android:id="@+id/id_textView_Duration"
-                android:freezesText="true"
-                android:textStyle="bold"
-                android:gravity="center_horizontal" />
+                android:gravity="center_horizontal"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearanceLargeNumbers" />
 
             <TextView
                 android:layout_width="fill_parent"
@@ -116,13 +203,10 @@
                     android:gravity="center_horizontal" >
 
                     <TextView
+                        android:id="@+id/id_textView_Distance"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearanceLargeNumbers"
-                        android:id="@+id/id_textView_Distance"
-                        android:freezesText="true"
-                        android:textStyle="bold"
-                        android:gravity="center_horizontal" />
+                        android:textAppearance="@style/TextAppearanceLargeNumbers" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -170,13 +254,10 @@
                 android:gravity="center_horizontal" >
 
                 <TextView
+                    android:id="@+id/id_textView_AltitudeMin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearanceLargeNumbers"
-                    android:id="@+id/id_textView_AltitudeMin"
-                    android:freezesText="true"
-                    android:textStyle="bold"
-                    android:gravity="center_horizontal" />
+                    android:textAppearance="@style/TextAppearanceLargeNumbers" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -215,13 +296,10 @@
                 android:gravity="center_horizontal" >
 
                 <TextView
+                    android:id="@+id/id_textView_AltitudeMax"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearanceLargeNumbers"
-                    android:id="@+id/id_textView_AltitudeMax"
-                    android:freezesText="true"
-                    android:textStyle="bold"
-                    android:gravity="center_horizontal" />
+                    android:textAppearance="@style/TextAppearanceLargeNumbers" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -260,7 +338,7 @@
             android:background="@drawable/rounded_corner"
             android:paddingTop="3dp"
             android:paddingBottom="3dp"
-            android:layout_weight="1" >
+            android:layout_weight="1">
 
             <TableRow
                 android:layout_width="fill_parent"
@@ -269,13 +347,10 @@
                 android:gravity="center_horizontal" >
 
                 <TextView
+                    android:id="@+id/id_textView_AltitudeUp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearanceLargeNumbers"
-                    android:id="@+id/id_textView_AltitudeUp"
-                    android:freezesText="true"
-                    android:textStyle="bold"
-                    android:gravity="center_horizontal" />
+                    android:textAppearance="@style/TextAppearanceLargeNumbers" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -314,13 +389,10 @@
                 android:gravity="center_horizontal" >
 
                 <TextView
+                    android:id="@+id/id_textView_AltitudeDown"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearanceLargeNumbers"
-                    android:id="@+id/id_textView_AltitudeDown"
-                    android:freezesText="true"
-                    android:textStyle="bold"
-                    android:gravity="center_horizontal" />
+                    android:textAppearance="@style/TextAppearanceLargeNumbers" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -368,13 +440,10 @@
                 android:gravity="center_horizontal" >
 
                 <TextView
+                    android:id="@+id/id_textView_AltitudeGap"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearanceLargeNumbers"
-                    android:id="@+id/id_textView_AltitudeGap"
-                    android:freezesText="true"
-                    android:textStyle="bold"
-                    android:gravity="center_horizontal" />
+                    android:textAppearance="@style/TextAppearanceLargeNumbers" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -413,13 +482,10 @@
                 android:gravity="center_horizontal" >
 
                 <TextView
+                    android:id="@+id/id_textView_SpeedMax"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearanceLargeNumbers"
-                    android:id="@+id/id_textView_SpeedMax"
-                    android:freezesText="true"
-                    android:textStyle="bold"
-                    android:gravity="center_horizontal" />
+                    android:textAppearance="@style/TextAppearanceLargeNumbers" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -467,13 +533,10 @@
                 android:gravity="center_horizontal" >
 
                 <TextView
+                        android:id="@+id/id_textView_SpeedAvg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearanceLargeNumbers"
-                    android:id="@+id/id_textView_SpeedAvg"
-                    android:freezesText="true"
-                    android:textStyle="bold"
-                    android:gravity="center_horizontal" />
+                        android:textAppearance="@style/TextAppearanceLargeNumbers" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -512,13 +575,10 @@
                 android:gravity="center_horizontal" >
 
                 <TextView
+                        android:id="@+id/id_textView_OverallDirection"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearanceLargeNumbers"
-                    android:id="@+id/id_textView_OverallDirection"
-                    android:freezesText="true"
-                    android:textStyle="bold"
-                    android:gravity="center_horizontal" />
+                        android:textAppearance="@style/TextAppearanceLargeNumbers" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -539,6 +599,7 @@
                 android:textSize="13sp"
                 android:gravity="center_horizontal" />
         </TableLayout>
+
     </LinearLayout>
 
 </LinearLayout>
@@ -549,7 +610,6 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:id="@+id/id_textView_TrackStatus"
         android:paddingTop="30dp"
-        android:text="@string/track_empty"
         android:gravity="center_horizontal" />
 
 </FrameLayout>

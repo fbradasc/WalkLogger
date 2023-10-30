@@ -1,6 +1,9 @@
-/**
+/*
  * GPSService - Java Class for Android
- * Created by G.Capelli (BasicAirData) on 2/11/2016
+ * Created by G.Capelli on 2/11/2016
+ * This file is part of BasicAirData GPS Logger
+ *
+ * Copyright (C) 2011 BasicAirData
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +43,11 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+/**
+ * The Foreground Service that keeps alive the app in background when recording.
+ * It shows a notification that shows the status of the recording, the traveled distance
+ * and the related duration.
+ */
 public class GPSService extends Service {
     PendingIntent activityRecognitionPendingIntent = null;
 //    private long _UserStillSinceTimeStamp = 0;
@@ -49,60 +57,31 @@ public class GPSService extends Service {
     private NotificationCompat.Builder builder;
     private NotificationManager mNotificationManager;
     private boolean recordingState = false;
+    private PowerManager.WakeLock wakeLock;                 // PARTIAL_WAKELOCK
 
-    public class LocalBinder extends Binder {               // Returns the instance of the service
+    /**
+     * Returns the instance of the service
+     */
+    public class LocalBinder extends Binder {
         public GPSService getServiceInstance(){
             return GPSService.this;
         }
     }
     private final IBinder mBinder = new LocalBinder();      // IBinder
 
-    PowerManager.WakeLock wakeLock;                         // PARTIAL_WAKELOCK
-
-
-    private Notification getNotification() {
-        final String CHANNEL_ID = "GPSLoggerServiceChannel";
-
-        recordingState = isIconRecording();
-
-        builder = new NotificationCompat.Builder(this, CHANNEL_ID);
-        //builder.setSmallIcon(R.drawable.ic_notification_24dp)
-        builder.setSmallIcon(recordingState ? R.mipmap.ic_notify_recording_24dp : R.mipmap.ic_notify_24dp)
-                .setColor(getResources().getColor(R.color.colorPrimaryLight))
-                .setContentTitle(getString(R.string.app_name))
-                .setShowWhen(false)
-                .setPriority(NotificationCompat.PRIORITY_LOW)
-                .setCategory(NotificationCompat.CATEGORY_SERVICE)
-                .setOngoing(true)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setContentText(composeContentText());
-
-        final Intent startIntent = new Intent(getApplicationContext(), GPSActivity.class);
-        startIntent.setAction(Intent.ACTION_MAIN);
-        startIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        startIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 1, startIntent, 0);
-        builder.setContentIntent(contentIntent);
-        return builder.build();
-    }
-
-
     @Override
     public void onCreate() {
         super.onCreate();
-
         // PARTIAL_WAKELOCK
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"WalkLogger:wakelock");
         Log.w("myApp", "[#] GPSService.java - CREATE = onCreate");
-
         // Workaround for Nokia Devices, Android 9
         // https://github.com/BasicAirData/WalkLogger/issues/77
         if (EventBus.getDefault().isRegistered(this)) {
             //Log.w("myApp", "[#] GPSActivity.java - EventBus: GPSActivity already registered");
             EventBus.getDefault().unregister(this);
         }
-
         EventBus.getDefault().register(this);
     }
 
@@ -126,7 +105,6 @@ public class GPSService extends Service {
         Log.w("myApp", "[#] GPSService.java - BIND = onBind");
         requestActivityRecognitionUpdates();
         return mBinder;
-        //return null;
     }
 
     @Override
@@ -136,9 +114,7 @@ public class GPSService extends Service {
             wakeLock.release();
             Log.w("myApp", "[#] GPSService.java - WAKELOCK released");
         }
-
         EventBus.getDefault().unregister(this);
-
         Log.w("myApp", "[#] GPSService.java - DESTROY = onDestroy");
         stopActivityRecognitionUpdates();
         // THREAD FOR DEBUG PURPOSE
@@ -146,18 +122,19 @@ public class GPSService extends Service {
         super.onDestroy();
     }
 
+    /**
+     * The EventBus receiver for Short Messages.
+     */
     @Subscribe (threadMode = ThreadMode.MAIN)
     public void onEvent(Short msg) {
         if ((msg == EventBusMSG.UPDATE_FIX) && (builder != null)) {
             String notificationText = composeContentText();
             if (!oldNotificationText.equals(notificationText)) {
                 builder.setContentText(notificationText);
-
                 if (isIconRecording() != recordingState) {
                     recordingState = isIconRecording();
                     builder.setSmallIcon(recordingState ? R.mipmap.ic_notify_recording_24dp : R.mipmap.ic_notify_24dp);
                 }
-
                 mNotificationManager.notify(ID, builder.build());
                 oldNotificationText = notificationText;
                 //Log.w("myApp", "[#] GPSService.java - Update Notification Text");
@@ -165,17 +142,50 @@ public class GPSService extends Service {
         }
     }
 
+    /**
+     * Creates and gets the Notification.
+     *
+     * @return the Notification
+     */
+    private Notification getNotification() {
+        final String CHANNEL_ID = "GPSLoggerServiceChannel";
 
-    private boolean isIconRecording () {
-        return ((GPSApplication.getInstance().getGPSStatus() == GPSApplication.GPS_OK) && GPSApplication.getInstance().getRecording());
+        recordingState = isIconRecording();
+        builder = new NotificationCompat.Builder(this, CHANNEL_ID);
+        //builder.setSmallIcon(R.drawable.ic_notification_24dp)
+        builder.setSmallIcon(recordingState ? R.mipmap.ic_notify_recording_24dp : R.mipmap.ic_notify_24dp)
+                .setColor(getResources().getColor(R.color.colorPrimaryLight))
+                .setContentTitle(getString(R.string.app_name))
+                .setShowWhen(false)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                .setOngoing(true)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setContentText(composeContentText());
+
+        final Intent startIntent = new Intent(getApplicationContext(), GPSActivity.class);
+        startIntent.setAction(Intent.ACTION_MAIN);
+        startIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        startIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 1, startIntent, PendingIntent.FLAG_IMMUTABLE);
+        builder.setContentIntent(contentIntent);
+        return builder.build();
     }
 
+    /**
+     * @return true if the icon should be the filled one, indicating that the app is recording.
+     */
+    private boolean isIconRecording () {
+        return ((GPSApplication.getInstance().getGPSStatus() == GPSApplication.GPS_OK) && GPSApplication.getInstance().isRecording());
+    }
 
+    /**
+     * @return The string to use as Notification description.
+     */
     private String composeContentText () {
         String notificationText = "";
-
-        int GPSStatus = GPSApplication.getInstance().getGPSStatus();
-        switch (GPSStatus) {
+        int gpsStatus = GPSApplication.getInstance().getGPSStatus();
+        switch (gpsStatus) {
             case GPSApplication.GPS_DISABLED:
                 notificationText = getString(R.string.gps_disabled);
                 break;
@@ -190,20 +200,20 @@ public class GPSService extends Service {
                 notificationText = getString(R.string.gps_stabilizing);
                 break;
             case GPSApplication.GPS_OK:
-                if (GPSApplication.getInstance().getRecording() && (GPSApplication.getInstance().getCurrentTrack() != null)) {
+                if (GPSApplication.getInstance().isRecording() && (GPSApplication.getInstance().getCurrentTrack() != null)) {
                     PhysicalDataFormatter phdformatter = new PhysicalDataFormatter();
                     PhysicalData phdDuration;
                     PhysicalData phdDistance;
 
                     // Duration
                     phdDuration = phdformatter.format(GPSApplication.getInstance().getCurrentTrack().getPrefTime(), PhysicalDataFormatter.FORMAT_DURATION);
-                    if (phdDuration.Value.isEmpty()) phdDuration.Value = "00:00";
-                    notificationText = getString(R.string.duration) + ": " + phdDuration.Value;
+                    if (phdDuration.value.isEmpty()) phdDuration.value = "00:00";
+                    notificationText = getString(R.string.duration) + ": " + phdDuration.value;
 
                     // Distance (if available)
                     phdDistance = phdformatter.format(GPSApplication.getInstance().getCurrentTrack().getEstimatedDistance(), PhysicalDataFormatter.FORMAT_DISTANCE);
-                    if (!phdDistance.Value.isEmpty()) {
-                        notificationText += " - " + getString(R.string.distance) + ": " + phdDistance.Value + " " + phdDistance.UM;
+                    if (!phdDistance.value.isEmpty()) {
+                        notificationText += " - " + getString(R.string.distance) + ": " + phdDistance.value + " " + phdDistance.um;
                     }
                 } else {
                     notificationText = getString(R.string.notification_contenttext);

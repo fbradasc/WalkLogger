@@ -2,7 +2,10 @@
 
 <!--
   ~ app_preferences.xml
-  ~ Created by G.Capelli (BasicAirData) on 31/7/2016
+  ~ Created by G.Capelli on 31/7/2016
+  ~ This file is part of BasicAirData GPS Logger
+  ~
+  ~ Copyright (C) 2011 BasicAirData
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -61,11 +64,10 @@
             android:defaultValue="0" />
 
         <androidx.preference.ListPreference
-            android:key="prefUMSpeed"
+            android:key="prefUMOfSpeed"
             android:title="@string/pref_unit_of_measurement_speed"
-            android:summary=" "
-            android:entries="@array/UMSpeed_Metric"
-            android:entryValues="@array/UMSpeedValues"
+            android:entries="@array/UMOfSpeed"
+            android:entryValues="@array/UMOfSpeedValues"
             android:defaultValue="1" />
 
         <androidx.preference.ListPreference
@@ -88,18 +90,16 @@
             android:summary="@string/pref_show_decimal_coordinates_summary"
             android:defaultValue="false" />
 
+        <androidx.preference.Preference
+            android:key="prefExportFolder"
+            android:title="@string/pref_exportation_folder"
+            android:summary=" "
+            android:defaultValue="" />
+
     </androidx.preference.PreferenceCategory>
 
     <androidx.preference.PreferenceCategory
         android:title="@string/pref_category_tracking">
-
-        <androidx.preference.ListPreference
-            android:key="prefGPSdistance"
-            android:title="@string/pref_GPS_distance"
-            android:summary=" "
-            android:entries="@array/GPSDistance_Metric"
-            android:entryValues="@array/GPSDistanceValues"
-            android:defaultValue="0" />
 
         <androidx.preference.ListPreference
             android:key="prefGPSupdatefrequency"
@@ -108,6 +108,20 @@
             android:entries="@array/GPSupdatefrequency"
             android:entryValues="@array/GPSupdatefrequencyValues"
             android:defaultValue="1000" />
+
+        <androidx.preference.EditTextPreference
+            android:key="prefGPSinterval"
+            android:title="@string/pref_GPS_interval_filter"
+            android:summary=" "
+            android:maxLines="1"
+            android:defaultValue="0" />
+
+        <androidx.preference.EditTextPreference
+            android:key="prefGPSdistanceRaw"
+            android:title="@string/pref_GPS_distance_filter"
+            android:summary=" "
+            android:maxLines="1"
+            android:defaultValue="0" />
 
     </androidx.preference.PreferenceCategory>
 

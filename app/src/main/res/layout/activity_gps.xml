@@ -2,7 +2,10 @@
 
 <!--
   ~ activity_gps.xml
-  ~ Created by G.Capelli (BasicAirData) on 8/6/2016
+  ~ Created by G.Capelli on 8/6/2016
+  ~ This file is part of BasicAirData GPS Logger
+  ~
+  ~ Copyright (C) 2011 BasicAirData
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -29,6 +32,8 @@
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/id_appbarlayout"
+        android:focusable="false"
+        android:descendantFocusability="blocksDescendants"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppBarLayout">

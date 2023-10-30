@@ -623,13 +623,17 @@ class DatabaseHandler extends SQLiteOpenHelper {
         trkvalues.put(KEY_TRACK_END_ACCURACY, track.getAccuracyEnd());
         trkvalues.put(KEY_TRACK_END_SPEED, track.getSpeedEnd());
         trkvalues.put(KEY_TRACK_END_TIME, track.getTimeEnd());
+
         trkvalues.put(KEY_TRACK_LASTSTEPDST_LATITUDE, track.getLatitudeLastStepDistance());
         trkvalues.put(KEY_TRACK_LASTSTEPDST_LONGITUDE, track.getLongitudeLastStepDistance());
         trkvalues.put(KEY_TRACK_LASTSTEPDST_ACCURACY, track.getAccuracyLastStepDistance());
+
         trkvalues.put(KEY_TRACK_LASTSTEPALT_ALTITUDE, track.getAltitudeLastStepAltitude());
         trkvalues.put(KEY_TRACK_LASTSTEPALT_ACCURACY, track.getAccuracyLastStepAltitude());
+
         trkvalues.put(KEY_TRACK_MIN_LATITUDE, track.getLatitudeMin());
         trkvalues.put(KEY_TRACK_MIN_LONGITUDE, track.getLongitudeMin());
+
         trkvalues.put(KEY_TRACK_MAX_LATITUDE, track.getLatitudeMax());
         trkvalues.put(KEY_TRACK_MAX_LONGITUDE, track.getLongitudeMax());
 
@@ -894,8 +898,8 @@ class DatabaseHandler extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 do {
                     LatLng latlng = new LatLng();
-                    latlng.Latitude = cursor.getDouble(1);
-                    latlng.Longitude = cursor.getDouble(2);
+                    latlng.latitude = cursor.getDouble(1);
+                    latlng.longitude = cursor.getDouble(2);
 
                     latlngList.add(latlng); // Add Location to list
                 } while (cursor.moveToNext());

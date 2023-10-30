@@ -2,7 +2,10 @@
 
 <!--
   ~ include_warnings_gpsfix.xml
-  ~ Created by G.Capelli (BasicAirData) on 8/11/2020
+  ~ Created by G.Capelli on 8/11/2020
+  ~ This file is part of BasicAirData GPS Logger
+  ~
+  ~ Copyright (C) 2011 BasicAirData
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -20,13 +23,14 @@
 
 <LinearLayout android:id="@+id/id_warnings"
     android:layout_gravity="bottom"
-    android:paddingBottom="58dp"
+    android:paddingBottom="70dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
     android:orientation="vertical"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_view_warning_location_denied"
@@ -118,6 +122,54 @@
             android:drawablePadding="10dp"
             android:gravity="center_vertical"
             android:layout_gravity="bottom"/>
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_view_warning_battery_optimised"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="2dp"
+        android:layout_marginLeft="2dp"
+        android:foreground="?android:attr/selectableItemBackground"
+        card_view:cardBackgroundColor="@color/colorCardBackground"
+        android:clickable="true"
+        android:focusable="true"
+        card_view:cardCornerRadius="2dp"
+        card_view:cardElevation="3dp"
+        card_view:cardPreventCornerOverlap="false"
+        card_view:cardUseCompatPadding="true">
+
+        <TextView
+            android:id="@+id/id_warning_battery_optimised"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginRight="12dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/dlg_app_killed_description"
+            card_view:drawableStartCompat="@drawable/ic_warning_24dp"
+            card_view:drawableLeftCompat="@drawable/ic_warning_24dp"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:layout_gravity="bottom"/>
+
+        <ImageView
+            android:id="@+id/id_warning_battery_optimised_close"
+            android:layout_margin="4dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginRight="25dp"
+            app:srcCompat="@drawable/ic_close_24"
+            android:alpha="0.4"
+            android:maxWidth="14dp"
+            android:maxHeight="14dp"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:layout_gravity="top|end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
     </androidx.cardview.widget.CardView>
 
