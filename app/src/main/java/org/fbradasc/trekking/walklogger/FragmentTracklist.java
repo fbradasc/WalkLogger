@@ -60,7 +60,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static eu.basicairdata.graziano.gpslogger.GPSApplication.NOT_AVAILABLE;
+import static org.fbradasc.trekking.walklogger.GPSApplication.NOT_AVAILABLE;
 
 /**
  * The Fragment that displays and manages the list of the archived Tracks

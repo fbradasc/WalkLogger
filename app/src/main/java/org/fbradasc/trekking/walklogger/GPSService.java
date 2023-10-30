@@ -148,7 +148,7 @@ public class GPSService extends Service {
      * @return the Notification
      */
     private Notification getNotification() {
-        final String CHANNEL_ID = "GPSLoggerServiceChannel";
+        final String CHANNEL_ID = "WalkLoggerServiceChannel";
 
         recordingState = isIconRecording();
         builder = new NotificationCompat.Builder(this, CHANNEL_ID);

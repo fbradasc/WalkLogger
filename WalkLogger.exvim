@@ -26,7 +26,7 @@ build_opt = ''
 
 -- ex-project Options:
 enable_project_browser = true -- { true, false }
-project_browser = ex -- { ex, nerdtree }
+project_browser = nerdtree -- { ex, nerdtree }
 
 -- ex-gsearch Options:
 enable_gsearch = true -- { true, false }
