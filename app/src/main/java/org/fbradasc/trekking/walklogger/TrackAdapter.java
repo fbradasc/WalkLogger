@@ -238,7 +238,7 @@ class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackHolder> {
                 phd = phdformatter.format(track.getPrefTime(),PhysicalDataFormatter.FORMAT_DURATION);
                 textViewTrackDuration.setText(phd.value);
                 phd = phdformatter.format(track.getEstimatedAltitudeGap(GPSApplication.getInstance().getPrefEGM96AltitudeCorrection()),PhysicalDataFormatter.FORMAT_ALTITUDE);
-                textViewTrackAltitudeGap.setText(phd.value + " " + phd.UM);
+                textViewTrackAltitudeGap.setText(phd.value + " " + phd.um);
                 phd = phdformatter.format(track.getEstimatedAltitudeMin(GPSApplication.getInstance().getPrefEGM96AltitudeCorrection()),PhysicalDataFormatter.FORMAT_ALTITUDE);
                 textViewTrackAltitudeMin.setText(phd.value + " " + phd.um);
                 phd = phdformatter.format(track.getEstimatedAltitudeMax(GPSApplication.getInstance().getPrefEGM96AltitudeCorrection()),PhysicalDataFormatter.FORMAT_ALTITUDE);
