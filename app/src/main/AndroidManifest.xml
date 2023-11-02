@@ -21,8 +21,7 @@
   ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.fbradasc.trekking.walklogger">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -51,7 +50,7 @@
     </queries>
 
     <application
-        android:name="org.fbradasc.trekking.walklogger.GPSApplication"
+        android:name=".GPSApplication"
         android:allowBackup="true"
         android:fullBackupContent="@xml/my_backup_rules"
         android:installLocation="internalOnly"
@@ -61,7 +60,7 @@
         android:theme="@style/LaunchScreenTheme"
         android:supportsRtl="true">
 
-        <activity android:name="org.fbradasc.trekking.walklogger.GPSActivity"
+        <activity android:name=".GPSActivity"
             android:exported="true"
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan" >
@@ -71,7 +70,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="org.fbradasc.trekking.walklogger.SettingsActivity"
+        <activity android:name=".SettingsActivity"
             android:theme="@style/MySettingsTheme"
             android:label="@string/menu_settings"
             android:launchMode="singleTask"
@@ -79,12 +78,12 @@
             android:windowSoftInputMode="adjustPan" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.fbradasc.trekking.walklogger.GPSActivity" />
+                android:value=".GPSActivity" />
         </activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="org.fbradasc.trekking.walklogger.fileprovider"
+            android:authorities="${applicationId}.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -92,7 +91,7 @@
                 android:resource="@xml/filepaths" />
         </provider>
 
-        <receiver android:name="org.fbradasc.trekking.walklogger.ActionsBroadcastReceiver"
+        <receiver android:name=".ActionsBroadcastReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
@@ -100,12 +99,12 @@
         </receiver>
 
         <service
-            android:name="org.fbradasc.trekking.walklogger.GPSService"
+            android:name=".GPSService"
             android:enabled="true"
             android:foregroundServiceType="location"
             android:exported="false">
             <intent-filter>
-                <action android:name="org.fbradasc.trekking.walklogger.GPSService" />
+                <action android:name=".GPSService" />
             </intent-filter>
         </service>
 

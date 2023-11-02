@@ -37,6 +37,7 @@ import androidx.fragment.app.Fragment;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -77,6 +78,11 @@ public class FragmentTracklist extends Fragment {
 
     public FragmentTracklist() {
         // Required empty public constructor
+    }
+
+    private boolean FileExists(String filename) {
+        File file = new File(filename);
+        return file.exists ();
     }
 
     @Override
@@ -304,65 +310,23 @@ public class FragmentTracklist extends Fragment {
             return;
         }
         if (msg == EventBusMSG.ACTION_BULK_DELETE_TRACKS) {
-            final ArrayList<Track> selectedTracks = GPSApplication.getInstance().getSelectedTracks();
-
-            // Check if exist at least one exported file:
-            boolean fileexist = false;
-            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                for (Track track : selectedTracks) {
-                    fileexist |= FileExists(Environment.getExternalStorageDirectory() + "/WalkLogger/" + track.getName() + ".kml")
-                              || FileExists(Environment.getExternalStorageDirectory() + "/WalkLogger/" + track.getName() + ".gpx")
-                              || FileExists(Environment.getExternalStorageDirectory() + "/WalkLogger/" + track.getName() + ".txt")
-                              || FileExists(Environment.getExternalStorageDirectory() + "/WalkLogger/" + track.getName() + "_placemarks.txt");
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(getResources().getString(R.string.card_message_delete_confirmation));
+            builder.setIcon(android.R.drawable.ic_menu_info_details);
+            builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.dismiss();
+                    GPSApplication.getInstance().loadJob(GPSApplication.JOB_TYPE_DELETE);
+                    GPSApplication.getInstance().executeJob();
                 }
-            }
-            if (fileexist) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage(getResources().getString(R.string.card_message_delete_also_exported));
-                builder.setIcon(android.R.drawable.ic_menu_info_details);
-                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                        GPSApplication.getInstance().setDeleteAlsoExportedFiles(true); // Delete also exported files
-                        GPSApplication.getInstance().LoadJob(GPSApplication.JOB_TYPE_DELETE);
-                        GPSApplication.getInstance().ExecuteJob();
-                    }
-                });
-                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                        GPSApplication.getInstance().setDeleteAlsoExportedFiles(false); // Don't delete exported files
-                        GPSApplication.getInstance().LoadJob(GPSApplication.JOB_TYPE_DELETE);
-                        GPSApplication.getInstance().ExecuteJob();
-                    }
-                });
-                builder.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            } else {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage(getResources().getString(R.string.card_message_delete_confirmation));
-                builder.setIcon(android.R.drawable.ic_menu_info_details);
-                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                        GPSApplication.getInstance().setDeleteAlsoExportedFiles(false); // Don't delete exported files
-                        GPSApplication.getInstance().loadJob(GPSApplication.JOB_TYPE_DELETE);
-                        GPSApplication.getInstance().executeJob();
-                    }
-                });
-                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.dismiss();
-                    }
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
+            });
+            builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
             return;
         }
         if (msg == EventBusMSG.INTENT_SEND || msg == EventBusMSG.INTENT_SEND_PLACEMARKS) {
@@ -421,22 +385,22 @@ public class FragmentTracklist extends Fragment {
                     if (track.getNumberOfLocations() <= 1) {
                         extraText.append(getString(R.string.app_name)  + " - " + getString(R.string.tab_track) + " " + track.getName()
                                 + "\n" + track.getNumberOfLocations () + " "   + getString(R.string.trackpoints)
-                                + "\n" + track.getNumberOfPlacemarks() + " "   + getString(R.string.placemarks)
+                                + "\n" + track.getNumberOfPlacemarks() + " "   + getString(R.string.annotations)
                                 + "\n" + track.getNumberOfSteps     () + " "   + getString(R.string.steps));
                     } else {
                         intent.putExtra(Intent.EXTRA_TEXT, (CharSequence) ("GPS Logger - Track " + track.getName()
                                 + "\n" + track.getNumberOfLocations() + " " + getString(R.string.trackpoints)
-                                + "\n" + track.getNumberOfPlacemarks() + " " + getString(R.string.placemarks)
+                                + "\n" + track.getNumberOfPlacemarks() + " " + getString(R.string.annotations)
                                 + "\n" + track.getNumberOfSteps() + " " + "Steps"
                                 + "\n"
-                                + "\n" + getString(R.string.distance) + " = " + phdDistance.Value + " " + phdDistance.UM
-                                + "\n" + getString(R.string.duration) + " = " + phdDuration.Value + " | " + phdDurationMoving.Value
-                                + "\n" + getString(R.string.altitude_gap) + " = " + phdAltitudeGap.Value + " " + phdAltitudeGap.UM
-                                + "\n" + getString(R.string.altitude_min) + " = " + phdAltitudeMin.Value + " " + phdAltitudeMin.UM
-                                + "\n" + getString(R.string.altitude_max) + " = " + phdAltitudeMax.Value + " " + phdAltitudeMax.UM
-                                + "\n" + getString(R.string.max_speed) + " = " + phdSpeedMax.Value + " " + phdSpeedMax.UM
-                                + "\n" + getString(R.string.average_speed) + " = " + phdSpeedAvg.Value + " | " + phdSpeedAvgMoving.Value + " " + phdSpeedAvg.UM
-                                + "\n" + getString(R.string.overall_direction) + " = " + phdOverallDirection.Value + " " + phdOverallDirection.UM
+                                + "\n" + getString(R.string.distance) + " = " + phdDistance.value + " " + phdDistance.um
+                                + "\n" + getString(R.string.duration) + " = " + phdDuration.value + " | " + phdDurationMoving.value
+                                + "\n" + getString(R.string.altitude_gap) + " = " + phdAltitudeGap.value + " " + phdAltitudeGap.um
+                                + "\n" + getString(R.string.altitude_min) + " = " + phdAltitudeMin.value + " " + phdAltitudeMin.um
+                                + "\n" + getString(R.string.altitude_max) + " = " + phdAltitudeMax.value + " " + phdAltitudeMax.um
+                                + "\n" + getString(R.string.max_speed) + " = " + phdSpeedMax.value + " " + phdSpeedMax.um
+                                + "\n" + getString(R.string.average_speed) + " = " + phdSpeedAvg.value + " | " + phdSpeedAvgMoving.value + " " + phdSpeedAvg.um
+                                + "\n" + getString(R.string.overall_direction) + " = " + phdOverallDirection.value + " " + phdOverallDirection.um
                                 + "\n"
                                 + "\n" + getString(R.string.pref_track_stats) + ": " + getString(R.string.pref_track_stats_totaltime) + " | " + getString(R.string.pref_track_stats_movingtime)));
                     }
@@ -465,7 +429,7 @@ public class FragmentTracklist extends Fragment {
                 if (file.exists ()  && GPSApplication.getInstance().getPrefExportPMK()) {
                     if (!send_all_data) {
                         extraText.append(getString(R.string.tab_track) + " " + track.getName()
-                                + ": " + track.getNumberOfPlacemarks() + " " + getString(R.string.placemarks) + "\n\n");
+                                + ": " + track.getNumberOfPlacemarks() + " " + getString(R.string.annotations) + "\n\n");
 
                         FileReader     fr = null;
                         BufferedReader br = null;

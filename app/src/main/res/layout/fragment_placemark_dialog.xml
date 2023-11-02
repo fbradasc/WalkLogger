@@ -402,7 +402,7 @@
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:selectAllOnFocus="true"
-                    android:hint="@string/dlg_placemark_description"
+                    android:hint="@string/dlg_enter_the_description"
                     android:inputType="textCapSentences"
                     android:nextFocusLeft="@id/pdata_speed"
                     android:nextFocusForward="@id/pdata_speed"

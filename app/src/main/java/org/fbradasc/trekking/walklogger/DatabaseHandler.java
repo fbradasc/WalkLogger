@@ -56,7 +56,7 @@ class DatabaseHandler extends SQLiteOpenHelper {
     // All Static variables
 
     // Database Version
-    private static final int DATABASE_VERSION = 6;          // Updated to 2 in v2.1.3 (code 14)
+    private static final int DATABASE_VERSION = 7;          // Updated to 2 in v2.1.3 (code 14)
     private static final int LOCATION_TYPE_LOCATION = 1;
     private static final int LOCATION_TYPE_PLACEMARK = 2;
 
@@ -149,6 +149,7 @@ class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_TRACK_TYPE = "type";
 
     private static final String KEY_TRACK_VALIDMAP = "validmap";
+    private static final String KEY_TRACK_DESCRIPTION = "description";
 
 
     private static final int I_ID = 0;
@@ -196,6 +197,7 @@ class DatabaseHandler extends SQLiteOpenHelper {
     private static final int I_TRACK_ALTITUDE_MIN = 42;
     private static final int I_TRACK_ALTITUDE_MAX = 43;
     private static final int I_TRACK_DISTANCE_MOVING = 44;
+    private static final int I_TRACK_DESCRIPTION = 45;
 
     private static final int I_LOCATION_ID = 0;
     private static final int I_LOCATION_TRACK_ID = 1;
@@ -285,7 +287,8 @@ class DatabaseHandler extends SQLiteOpenHelper {
                 + KEY_TRACK_NUMBEROFSTEPS + " INTEGER,"             // 41
                 + KEY_TRACK_ALTITUDE_MIN + " REAL,"                 // 42
                 + KEY_TRACK_ALTITUDE_MAX + " REAL,"                 // 43
-                + KEY_TRACK_DISTANCE_MOVING + " REAL " + ")";       // 44
+                + KEY_TRACK_DISTANCE_MOVING + " REAL,"              // 44
+                + KEY_TRACK_DESCRIPTION + " TEXT" + ")";            // 45
         db.execSQL(CREATE_TRACKS_TABLE);
 
         String CREATE_LOCATIONS_TABLE = "CREATE TABLE " + TABLE_LOCATIONS + "("
@@ -346,6 +349,8 @@ class DatabaseHandler extends SQLiteOpenHelper {
             + TABLE_TRACKS + " ADD COLUMN " + KEY_TRACK_DISTANCE_MOVING + " REAL DEFAULT " +  NOT_AVAILABLE + ";";
     private static final String DATABASE_ALTER_TABLE_LOCATIONS_TO_V6 = "ALTER TABLE "
             + TABLE_LOCATIONS + " ADD COLUMN " + KEY_LOCATION_ISNEWPATHSTART + " INTEGER DEFAULT 0;";
+    private static final String DATABASE_ALTER_TABLE_TRACKS_TO_V7 = "ALTER TABLE "
+            + TABLE_TRACKS + " ADD COLUMN " + KEY_TRACK_DESCRIPTION + " STRING DEFAULT \"\";";
 
     /**
      * Upgrade the database version, altering the corresponding tables.
@@ -386,6 +391,9 @@ class DatabaseHandler extends SQLiteOpenHelper {
             case 5:
                 //upgrade from version 5 to 6
                 db.execSQL(DATABASE_ALTER_TABLE_LOCATIONS_TO_V6);
+            case 6:
+                //upgrade from version 6 to 7
+                db.execSQL(DATABASE_ALTER_TABLE_TRACKS_TO_V7);
 
                 //and so on.. do not add breaks so that switch will
                 //start at oldVersion, and run straight through to the latest
@@ -562,6 +570,7 @@ class DatabaseHandler extends SQLiteOpenHelper {
         trkvalues.put(KEY_TRACK_TYPE, track.getType());
 
         trkvalues.put(KEY_TRACK_VALIDMAP, track.getValidMap());
+        trkvalues.put(KEY_TRACK_DESCRIPTION, track.getDescription());
 
         try {
             db.beginTransaction();
@@ -648,6 +657,8 @@ class DatabaseHandler extends SQLiteOpenHelper {
         trkvalues.put(KEY_TRACK_ALTITUDE_UP, track.getAltitudeUp());
         trkvalues.put(KEY_TRACK_ALTITUDE_DOWN, track.getAltitudeDown());
         trkvalues.put(KEY_TRACK_ALTITUDE_INPROGRESS, track.getAltitudeInProgress());
+        trkvalues.put(KEY_TRACK_ALTITUDE_MIN, track.getAltitudeMin());
+        trkvalues.put(KEY_TRACK_ALTITUDE_MAX, track.getAltitudeMax());
 
         trkvalues.put(KEY_TRACK_SPEED_MAX, track.getSpeedMax());
         trkvalues.put(KEY_TRACK_SPEED_AVERAGE, track.getSpeedAverage());
@@ -659,6 +670,7 @@ class DatabaseHandler extends SQLiteOpenHelper {
         trkvalues.put(KEY_TRACK_TYPE, track.getType());
 
         trkvalues.put(KEY_TRACK_VALIDMAP, track.getValidMap());
+        trkvalues.put(KEY_TRACK_DESCRIPTION, track.getDescription());
 
         try {
             db.beginTransaction();
@@ -1117,6 +1129,7 @@ class DatabaseHandler extends SQLiteOpenHelper {
         trkvalues.put(KEY_TRACK_TYPE, track.getType());
 
         trkvalues.put(KEY_TRACK_VALIDMAP, track.getValidMap());
+        trkvalues.put(KEY_TRACK_DESCRIPTION, track.getDescription());
 
         long TrackID;
         // Inserting Row
@@ -1129,7 +1142,7 @@ class DatabaseHandler extends SQLiteOpenHelper {
 
     private Track loadTrack(Cursor cursor) {
         Track track = new Track();
-        track.FromDB (
+        track.fromDB (
             cursor.getLong(I_ID),
             cursor.getString(I_TRACK_NAME),
             cursor.getString(I_TRACK_FROM),
@@ -1187,7 +1200,8 @@ class DatabaseHandler extends SQLiteOpenHelper {
             cursor.getLong(I_TRACK_NUMBEROFSTEPS),
 
             cursor.getInt(I_TRACK_VALIDMAP),
-            cursor.getInt(I_TRACK_TYPE)
+            cursor.getInt(I_TRACK_TYPE),
+            cursor.getString(I_TRACK_DESCRIPTION)
         );
 
         return track;

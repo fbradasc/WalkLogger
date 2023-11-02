@@ -164,6 +164,7 @@ public class GPSApplication extends Application implements LocationListener, Sen
     private boolean prefExportGPX = true;                        // If true the GPX file are exported on Share/Export
     private int prefGPXVersion = 100;                            // The version of the GPX schema
     private boolean prefExportTXT;                               // If true the TXT file are exported on Share/Export
+    private boolean prefExportPMK;                               // If true the TXT file are exported on Share/Export
     private int prefKMLAltitudeMode = 0;                         // The altitude mode for KML files: 1="clampToGround"; 0="absolute"
     private int prefShowTrackStatsType = 0;                      // What shown stats are based on: 0="Total time"; 1="Time in movement"
     private int prefShowDirections = 0;                          // Visualization of headings: 0="NSWE"; 1="Degrees"
@@ -579,7 +580,7 @@ public class GPSApplication extends Application implements LocationListener, Sen
     /**
      * Stops and Unbinds to the Foreground Service GPSService
      */
-    private void UnbindGPSService()
+    private void unbindGPSService()
     {
         try
         {
@@ -1415,7 +1416,7 @@ public class GPSApplication extends Application implements LocationListener, Sen
         //if (file.exists ()) file.delete();
         // -----------------------
 
-        startAndBindGPSService();
+        // startAndBindGPSService();
 
         //EventBus eventBus = EventBus.builder().addIndex(new EventBusIndex()).build();
         EventBus.builder().addIndex(new EventBusIndex() ).installDefaultEventBus();
@@ -1510,9 +1511,9 @@ public class GPSApplication extends Application implements LocationListener, Sen
     @Subscribe
     public void onEvent(EventBusMSGNormal msg)
     {
-        if (msg.MSGType == EventBusMSG.ACTIVITY_DETECTED)
+        if (msg.eventBusMSG == EventBusMSG.ACTIVITY_DETECTED)
         {
-            setDetectedActivity( (int)msg.id );
+            setDetectedActivity( (int)msg.trackID );
             EventBus.getDefault().post(EventBusMSG.REFRESH_TRACKLIST);
             return;
         }
@@ -1582,7 +1583,7 @@ public class GPSApplication extends Application implements LocationListener, Sen
             gpsUnavailableHandler.removeCallbacks(gpsUnavailableRunnable);                            // Cancel the previous unavail countdown handler
             gpsUnavailableHandler.postDelayed(gpsUnavailableRunnable, GPS_UNAVAILABLE_HANDLER_TIME);  // starts the unavailability timeout (in 7 sec.)
 
-            ToBeRecordedFix = null;
+            toBeRecordedFix = null;
 
             if (gpsStatus != GPS_OK)
             {
@@ -1666,9 +1667,9 @@ public class GPSApplication extends Application implements LocationListener, Sen
                 }
                 else
                 {
-                    if ( (Recording) && ( (prefGPSdistance == 0) || (loc.distanceTo(PrevRecordedFix.getLocation() ) >= prefGPSdistance) ) )
+                    if ( (isRecording) && ( (prefGPSdistance == 0) || (loc.distanceTo(prevRecordedFix.getLocation() ) >= prefGPSdistance) ) )
                     {
-                        ToBeRecordedFix = eloc;
+                        toBeRecordedFix = eloc;
                     }
 
                     ast.taskType = TASK_UPDATEFIX;
@@ -1905,9 +1906,9 @@ public class GPSApplication extends Application implements LocationListener, Sen
 /* FIXME: DEBUG_ONLY - START */
         AsyncTODO ast = new AsyncTODO();
 
-        ast.TaskType = "TASK_THUMBNAIL";
+        ast.taskType = "TASK_THUMBNAIL";
         ast.location = null;
-        AsyncTODOQueue.add(ast);
+        asyncTODOQueue.add(ast);
 /* FIXME: DEBUG_ONLY - END */
         Log.w("myApp", "[#] GPSApplication.java - SCREEN_OFF");
     }
@@ -2347,7 +2348,7 @@ public class GPSApplication extends Application implements LocationListener, Sen
                     ExportingTask et = new ExportingTask();
                     et.setId(t.getId() );
                     et.setName(getFileName(t) );
-                    ET.setNumberOfPoints_Total(T.getNumberOfPoints() );
+                    et.setNumberOfPoints_Total(t.getNumberOfPoints() );
                     et.setNumberOfPoints_Processed(0);
                     exportingTaskList.add(et);
                 }
@@ -2833,19 +2834,19 @@ public class GPSApplication extends Application implements LocationListener, Sen
                 }
 
 /* FIXME: DEBUG_ONLY - START */
-                if (asyncTODO.TaskType.equals("TASK_THUMBNAIL") )
+                if (asyncTODO.taskType.equals("TASK_THUMBNAIL") )
                 {
-                    synchronized (_ArrayListTracks) {
-                        for (Track T : _ArrayListTracks)
+                    synchronized (arrayListTracks) {
+                        for (Track T : arrayListTracks)
                         {
-                            if ( (T.getId() > 1) && (GPSDataBase.getTrack(T.getId() - 1) != null) )
+                            if ( (T.getId() > 1) && (gpsDataBase.getTrack(T.getId() - 1) != null) )
                             {
                                 String fname = (T.getId() - 1) + ".png";
                                 File file = new File(getApplicationContext().getFilesDir() + "/Thumbnails/", fname);
 
                                 if (!file.exists() )
                                 {
-                                    Th = new Thumbnailer(T.getId() - 1);
+                                    thumbnailer = new Thumbnailer(T.getId() - 1);
                                 }
                             }
                         }
@@ -3172,8 +3173,8 @@ public class GPSApplication extends Application implements LocationListener, Sen
 
                 if (drawScale > 0)
                 {
-                    Bitmap ThumbBitmap = null;
-                    Canvas ThumbCanvas = null;
+                    Bitmap thumbBitmap = null;
+                    Canvas thumbCanvas = null;
                     int points = 0;
 
                     do
@@ -3183,11 +3184,11 @@ public class GPSApplication extends Application implements LocationListener, Sen
                         List<LatLng> latlngList = new ArrayList<>();
 
                         //Log.w("myApp", "[#] GPSApplication.java - Thumbnailer Thread started");
-                        for (; points < NumberOfLocations; points += latlngList.size() )
+                        for (; points < numberOfLocations; points += latlngList.size() )
                         {
-                            latlngList.addAll(GPSDataBase.getLatLngList(Id, points, points + GroupOfLocations - 1) );
+                            latlngList.addAll(gpsDataBase.getLatLngList(id, points, points + groupOfLocations - 1) );
 
-                            if (GPSDataBase.isLatLongListNewPathReached() )
+                            if (gpsDataBase.isLatLongListNewPathReached() )
                             {
                                 points += latlngList.size();
                                 break;
@@ -3199,7 +3200,7 @@ public class GPSApplication extends Application implements LocationListener, Sen
                         {
                             if (thumbBitmap == null)
                             {
-                                thumbBitmap = Bitmap.createBitmap(Size, Size, Bitmap.Config.ARGB_8888);
+                                thumbBitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
                                 thumbCanvas = new Canvas(thumbBitmap);
                             }
 
@@ -3225,19 +3226,19 @@ public class GPSApplication extends Application implements LocationListener, Sen
                                                    (float) ( -latOffset + size - ( margin + sizeMinusMargins * ( (latlngList.get(latlngList.size() - 1).latitude - minLatitude) / drawScale ) ) ), endDotdrawPaint );
                         }
                     }
-                    while (points < NumberOfLocations);
+                    while (points < numberOfLocations);
 
                     points = 0;
 
                     do
                     {
-                        int GroupOfLocations = 200;
+                        int groupOfLocations = 200;
                         List<LatLng> latlngList = new ArrayList<>();
 
                         //Log.w("myApp", "[#] GPSApplication.java - Thumbnailer Thread started");
-                        for (; points < NumberOfPlacemarks; points += latlngList.size() )
+                        for (; points < numberOfPlacemarks; points += latlngList.size() )
                         {
-                            latlngList.addAll(GPSDataBase.getLatLngList(Id, points, points + GroupOfLocations - 1) );
+                            latlngList.addAll(gpsDataBase.getLatLngList(id, points, points + groupOfLocations - 1) );
                         }
 
                         //Log.w("myApp", "[#] GPSApplication.java - Added " + latlngList.size() + " items to Path");
@@ -3245,22 +3246,22 @@ public class GPSApplication extends Application implements LocationListener, Sen
                         {
                             if (thumbBitmap == null)
                             {
-                                thumbBitmap = Bitmap.createBitmap(Size, Size, Bitmap.Config.ARGB_8888);
+                                thumbBitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
                                 thumbCanvas = new Canvas(thumbBitmap);
                             }
 
                             for (int i = 0; i < latlngList.size(); i++)
                             {
-                                thumbCanvas.drawPoint( (float) ( Lon_Offset + Margin + Size_Minus_Margins * ( (latlngList.get(i).Longitude - MinLongitude) * Distance_Proportion / DrawScale ) ),
-                                                       (float) ( -Lat_Offset + Size - ( Margin + Size_Minus_Margins * ( (latlngList.get(i).Latitude - MinLatitude) / DrawScale ) ) ), MarkDotBGPaint );
-                                thumbCanvas.drawPoint( (float) ( Lon_Offset + Margin + Size_Minus_Margins * ( (latlngList.get(i).Longitude - MinLongitude) * Distance_Proportion / DrawScale ) ),
-                                                       (float) ( -Lat_Offset + Size - ( Margin + Size_Minus_Margins * ( (latlngList.get(i).Latitude - MinLatitude) / DrawScale ) ) ), MarkDotdrawPaint );
+                                thumbCanvas.drawPoint( (float) ( lonOffset + margin + sizeMinusMargins * ( (latlngList.get(i).longitude - minLongitude) * distanceProportion / drawScale ) ),
+                                                       (float) ( -latOffset + size - ( margin + sizeMinusMargins * ( (latlngList.get(i).latitude - minLatitude) / drawScale ) ) ), markDotBGPaint );
+                                thumbCanvas.drawPoint( (float) ( lonOffset + margin + sizeMinusMargins * ( (latlngList.get(i).longitude - minLongitude) * distanceProportion / drawScale ) ),
+                                                       (float) ( -latOffset + size - ( margin + sizeMinusMargins * ( (latlngList.get(i).latitude - minLatitude) / drawScale ) ) ), markDotdrawPaint );
                             }
                         }
                     }
                     while (points < numberOfPlacemarks);
 
-                    if (ThumbBitmap != null)
+                    if (thumbBitmap != null)
                     {
                         try
                         {
@@ -3367,14 +3368,14 @@ public class GPSApplication extends Application implements LocationListener, Sen
         else
         {
             isGPSPlacemarkLocationUpdatesActive = false;
-            disableLocationUpdatesHandler.removeCallbacks(gpsoffr);                 // Cancel the switch-off handler
+            disableLocationUpdatesHandler.removeCallbacks(disableLocationUpdatesRunnable);                 // Cancel the switch-off handler
             // setGpsOffTimeout(DEFAULT_SWITCHOFF_HANDLER_TIME);
             setGPSLocationUpdates(true);
-            disableLocationUpdatesHandler.postDelayed(gpsoffr, getGpsOffTimeout() );          // Starts the switch-off handler (delayed by HandlerTimer)
+            disableLocationUpdatesHandler.postDelayed(disableLocationUpdatesRunnable, getGpsOffTimeout() );          // Starts the switch-off handler (delayed by HandlerTimer)
 
             int steps = (int) event.values[0];
 
-            if (!Recording || (lastSaveSteps == Integer.MIN_VALUE) )
+            if (!isRecording || (lastSaveSteps == Integer.MIN_VALUE) )
             {
                 numberOfStepsOnBoot = steps;
 
@@ -3384,7 +3385,7 @@ public class GPSApplication extends Application implements LocationListener, Sen
                 }
             }
 
-            if (Recording)
+            if (isRecording)
             {
                 numberOfSteps = steps - numberOfStepsOnBoot;
 
@@ -3448,15 +3449,15 @@ public class GPSApplication extends Application implements LocationListener, Sen
                 asyncTODOQueue.add(ast);
             }
  */
-            if (ToBeRecordedFix != null)                     // Record the old sample if not already recorded
+            if (toBeRecordedFix != null)                     // Record the old sample if not already recorded
             {
                 AsyncTODO ast = new AsyncTODO();
-                ast.TaskType = "TASK_ADDLOCATION";
-                ast.location = ToBeRecordedFix;
+                ast.taskType = "TASK_ADDLOCATION";
+                ast.location = toBeRecordedFix;
                 ast.location.setNumberOfSteps(numberOfSteps);
                 ast.location.isNewPathStart(isNewPathStart() );
                 asyncTODOQueue.add(ast);
-                prevRecordedFix = ToBeRecordedFix;
+                prevRecordedFix = toBeRecordedFix;
                 isPrevFixRecorded = true;
                 toBeRecordedFix = null;
             }

@@ -52,7 +52,7 @@
         <TextView
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/textColorRecControlSecondary"
-            android:text="@string/placemarks"
+            android:text="@string/annotations"
             android:id="@+id/id_textView_PlacemarksLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

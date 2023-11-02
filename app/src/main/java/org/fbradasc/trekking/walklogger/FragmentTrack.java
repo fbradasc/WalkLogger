@@ -279,10 +279,10 @@ public class FragmentTrack extends Fragment {
                 tvAverageSpeed.setText(phdSpeedAvg.value);
                 tvDistance.setText(phdDistance.value);
                 tvAltitudeGap.setText(phdAltitudeGap.value);
-                tvAltitudeMin.setText(phdAltitudeMin.Value);
-                tvAltitudeMax.setText(phdAltitudeMax.Value);
-                tvAltitudeUp.setText(phdAltitudeUp.Value);
-                tvAltitudeDown.setText(phdAltitudeDown.Value);
+                tvAltitudeMin.setText(phdAltitudeMin.value);
+                tvAltitudeMax.setText(phdAltitudeMax.value);
+                tvAltitudeUp.setText(phdAltitudeUp.value);
+                tvAltitudeDown.setText(phdAltitudeDown.value);
                 tvOverallDirection.setText(phdOverallDirection.value);
 
                 tvMaxSpeedUM.setText(phdSpeedMax.um);
@@ -322,10 +322,10 @@ public class FragmentTrack extends Fragment {
                 tlDistance.setVisibility(phdDistance.value.equals("") ? View.INVISIBLE : View.VISIBLE);
                 tlOverallDirection.setVisibility(phdOverallDirection.value.equals("") ? View.INVISIBLE : View.VISIBLE);
                 tlAltitudeGap.setVisibility(phdAltitudeGap.value.equals("") ? View.INVISIBLE : View.VISIBLE);
-                tlAltitudeMin.setVisibility(phdAltitudeMin.Value.equals("") ? View.INVISIBLE : View.VISIBLE);
-                tlAltitudeMax.setVisibility(phdAltitudeMax.Value.equals("") ? View.INVISIBLE : View.VISIBLE);
-                tlAltitudeUp.setVisibility(phdAltitudeUp.Value.equals("") ? View.INVISIBLE : View.VISIBLE);
-                tlAltitudeDown.setVisibility(phdAltitudeDown.Value.equals("") ? View.INVISIBLE : View.VISIBLE);
+                tlAltitudeMin.setVisibility(phdAltitudeMin.value.equals("") ? View.INVISIBLE : View.VISIBLE);
+                tlAltitudeMax.setVisibility(phdAltitudeMax.value.equals("") ? View.INVISIBLE : View.VISIBLE);
+                tlAltitudeUp.setVisibility(phdAltitudeUp.value.equals("") ? View.INVISIBLE : View.VISIBLE);
+                tlAltitudeDown.setVisibility(phdAltitudeDown.value.equals("") ? View.INVISIBLE : View.VISIBLE);
                 tlTrackpoints.setVisibility(track.getNumberOfLocations() > 0 ? View.VISIBLE : View.INVISIBLE);
                 tlAnnotations.setVisibility(track.getNumberOfPlacemarks() + track.getNumberOfLocations() > 0 ? View.VISIBLE : View.INVISIBLE);
             } else {

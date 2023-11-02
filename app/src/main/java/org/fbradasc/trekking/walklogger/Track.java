@@ -252,11 +252,13 @@ public class Track
     // 1 = Map extents valid, OK generation of Thumb
     // 0 = Do not generate thumb (track crosses anti-meridian)
 
+   private int type = TRACK_TYPE_ND;                                // Saved in DB
+
     // The value of the progressbar in card view
     private int progress = 0;
 
     // The Progress of the last Job
-    private int JobProgress = 0;
+    private int jobProgress = 0;
 
     // True if the card view is selected
     private boolean isSelected = false;
@@ -606,7 +608,7 @@ public class Track
                        double altitudeLastStepAltitude, float accuracyLastStepAltitude,
                        double latitudeMin, double longitudeMin,
                        double latitudeMax, double longitudeMax,
-                       long duration, long durationMoving, float distance, float sistanceMoving, float distanceInProgress,
+                       long duration, long durationMoving, float distance, float distanceMoving, float distanceInProgress,
                        long distanceLastAltitude, double altitudeUp, double altitudeDown,
                        double altitudeInProgress, double altitudeMin, double altitudeMax, float speedMax, float speedAverage,
                        float speedAverageMoving, long numberOfLocations, long numberOfPlacemarks, long numberOfSteps,
@@ -1088,7 +1090,7 @@ public class Track
         return(distanceMoving + distanceInProgress);
     }
 
-    private double getEGMCorrection(boolean EGMCorrection)
+    private double getEGMCorrection(boolean egmCorrection)
     {
         // Retrieve EGM Corrections if available
         if ( (egmAltitudeCorrectionStart == NOT_AVAILABLE) || (egmAltitudeCorrectionEnd == NOT_AVAILABLE) )
@@ -1131,7 +1133,7 @@ public class Track
     public double getEstimatedAltitudeUp(boolean egmCorrection)
     {
         // Retrieve EGM Corrections if available
-        double egmcorr = getEGMCorrection(EGMCorrection);
+        double egmcorr = getEGMCorrection(egmCorrection);
         double dresultUp = altitudeInProgress > 0 ? altitudeUp + altitudeInProgress : altitudeUp;
         dresultUp -= egmcorr < 0 ? egmcorr : 0;
         double dresultDown = altitudeInProgress < 0 ? altitudeDown - altitudeInProgress : altitudeDown;
@@ -1161,7 +1163,7 @@ public class Track
     public double getEstimatedAltitudeDown(boolean egmCorrection)
     {
         // Retrieve EGM Corrections if available
-        double egmcorr = getEGMCorrection(EGMCorrection);
+        double egmcorr = getEGMCorrection(egmCorrection);
         double dresultUp = altitudeInProgress > 0 ? altitudeUp + altitudeInProgress : altitudeUp;
         dresultUp -= egmcorr < 0 ? egmcorr : 0;
         double dresultDown = altitudeInProgress < 0 ? altitudeDown - altitudeInProgress : altitudeDown;

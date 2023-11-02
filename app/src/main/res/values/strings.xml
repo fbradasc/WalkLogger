@@ -5,7 +5,7 @@
   ~ Created by G.Capelli on 8/5/2016
   ~ This file is part of BasicAirData GPS Logger
   ~
-  ~ Created by G.Capelli (BasicAirData) on 8/5/2016
+  ~ Copyright (C) 2011 BasicAirData
   ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@
 
     <!-- Track Status message -->
     <string name="track_empty">New Track</string>
-    <string name="track_empty">New Track\n\nStart recording Trackpoints\nor add a Placemark\nusing one of the buttons below</string>
+    <string name="track_start_with_button_below">Start recording Trackpoints\nor add an Annotation\nusing one of the buttons below</string>
 
     <!-- Recording buttons (bottom side) -->
     <string name="record">Record</string>
@@ -103,7 +103,7 @@
 
     <string name="ok">OK</string>
 
-    <string name="placemarks">Placemarks</string>
+    <string name="annotations">Annotations</string>
     <string name="trackpoints">Trackpoints</string>
     <string name="steps">Steps</string>
 
@@ -133,6 +133,7 @@
     <string name="card_trackinfo_max_speed">Max spd</string>
     <string name="card_trackinfo_average_speed">Avg spd</string>
     <string name="card_trackinfo_geopoints">Points</string>
+    <string name="card_trackinfo_annotations">Annot</string>
     <string name="card_trackinfo_steps">Steps</string>
 
     <!-- Context menu of Tracklist -->
@@ -231,6 +232,7 @@
     <string name="toast_download_completed">Download completed</string>
     <string name="toast_download_failed">Download failed. Try again later</string>
     <string name="toast_active_track_not_empty">The active track is not empty</string>
+    <string name="toast_no_browser_installed">No Internet browser installed</string>
 
     <!-- About Dialog -->
     <string name="about_version">ver.</string>
@@ -257,6 +259,7 @@
     <string name="UM_mph">mph</string>
     <string name="UM_nm">NM</string>
     <string name="UM_kn">kn</string>
+    <string name="UM_s">s</string>
     <string name="dphoto_speed">ASA</string>
     <string name="dphoto_ev">EV</string>
     <string name="dphoto_tv">TV</string>

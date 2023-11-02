@@ -461,7 +461,7 @@ class Exporter extends Thread {
                 txtBW.write("type,date time,latitude,longitude,accuracy(m),altitude(m),geoid_height(m),speed(m/s),bearing(deg),sat_used,sat_inview,name,desc" + newLine);
             }
 
-            if (ExportPMK) {
+            if (exportPMK) {
                 pmkBW.write("#Date,Time,Film,ASA,EV,Zone,TV,AV,FV,Description" + newLine);
             }
 
@@ -535,7 +535,7 @@ class Exporter extends Thread {
                                 gpxBW.write("<name>");     // Name
                                 gpxBW.write(timestamp.format(loc.getLocation().getTime()));
                                 gpxBW.write("</name>");
-                                gpxbw.write("<desc>");     // Name
+                                gpxBW.write("<desc>");     // Name
                                 gpxBW.write(stringToXML(loc.getDescription()));
                                 gpxBW.write("</desc>");
                                 if (loc.getNumberOfSatellitesUsedInFix() > 0) {     // Satellites used in fix
@@ -637,8 +637,8 @@ class Exporter extends Thread {
                             + gpsApp.getApplicationContext().getString(R.string.distance) + " = " + phdDistance.value + " " + phdDistance.um +
                             "<br>" + gpsApp.getApplicationContext().getString(R.string.duration) + " = " + phdDuration.value + " | " + phdDurationMoving.value +
                             "<br>" + gpsApp.getApplicationContext().getString(R.string.altitude_gap) + " = " + phdAltitudeGap.value + " " + phdAltitudeGap.um +
-                            "<br>" + gpsApp.getApplicationContext().getString(R.string.altitude_min) + " = " + phdAltitudeMin.Value + " " + phdAltitudeMin.um +
-                            "<br>" + gpsApp.getApplicationContext().getString(R.string.altitude_max) + " = " + phdAltitudeMax.Value + " " + phdAltitudeMax.um +
+                            "<br>" + gpsApp.getApplicationContext().getString(R.string.altitude_min) + " = " + phdAltitudeMin.value + " " + phdAltitudeMin.um +
+                            "<br>" + gpsApp.getApplicationContext().getString(R.string.altitude_max) + " = " + phdAltitudeMax.value + " " + phdAltitudeMax.um +
                             "<br>" + gpsApp.getApplicationContext().getString(R.string.max_speed) + " = " + phdSpeedMax.value + " " + phdSpeedMax.um +
                             "<br>" + gpsApp.getApplicationContext().getString(R.string.average_speed) + " = " + phdSpeedAvg.value + " | " + phdSpeedAvgMoving.value + " " + phdSpeedAvg.um +
                             "<br>" + gpsApp.getApplicationContext().getString(R.string.direction) + " = " + phdOverallDirection.value + " " + phdOverallDirection.um +

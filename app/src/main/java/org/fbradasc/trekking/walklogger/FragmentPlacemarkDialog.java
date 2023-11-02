@@ -92,7 +92,7 @@ public class FragmentPlacemarkDialog extends DialogFragment implements View.OnCl
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder createPlacemarkAlert = new AlertDialog.Builder(getActivity());
-        createPlacemarkAlert.setTitle(R.string.dlg_add_placemark);
+        createPlacemarkAlert.setTitle(R.string.dlg_add_annotation);
         createPlacemarkAlert.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_add_location_24dp, getActivity().getTheme()));
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -221,7 +221,7 @@ public class FragmentPlacemarkDialog extends DialogFragment implements View.OnCl
                         }
                     }
                 })
-                .setNegativeButton(R.string.dlg_button_cancel, new DialogInterface.OnClickListener() {
+                .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                     }

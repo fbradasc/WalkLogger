@@ -192,6 +192,7 @@
   <string name="toast_download_completed">Descarga completada</string>
   <string name="toast_download_failed">No se pudo descargar. Inténtalo más tarde</string>
     <string name="toast_active_track_not_empty">El itinerario actual no está vacío</string>
+    <string name="toast_no_browser_installed">No hay un navegador de internet instalado</string>
   <!-- About Dialog -->
   <string name="about_version">ver.</string>
     <string name="about_description">Copyright © 2016–%1$s BasicAirData\nhttps://www.basicairdata.eu\n\nBasicAirData GPS Logger registra itinerarios usando la posición GPS. El itinerario se puede visualizar en su app preferida, compartir y exportar a su dispositivo en formatos KML, GPX y TXT.\n\nEs un software libre, publicado bajo los términos de la licencia GNU General Public.\nMás detalles en el enlace: https://www.gnu.org/licenses/gpl.txt</string>

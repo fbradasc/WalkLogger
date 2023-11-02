@@ -207,7 +207,7 @@ public class GPSActivity extends AppCompatActivity {
             AlertDialog dialog = builder.create();
             dialog.show();
         }
-        if (GPSApp.isJustStarted() && (GPSApp.getCurrentTrack().getNumberOfItems() > 0)) {
+        if (gpsApp.isJustStarted() && (gpsApp.getCurrentTrack().getNumberOfItems() > 0)) {
             Toast toast = Toast.makeText(gpsApp.getApplicationContext(), R.string.toast_active_track_not_empty, Toast.LENGTH_LONG);
             toast.setGravity(Gravity.BOTTOM, 0, TOAST_VERTICAL_OFFSET);
             toast.show();
@@ -280,7 +280,7 @@ public class GPSActivity extends AppCompatActivity {
 
             case KeyEvent.KEYCODE_E:
                 // Open Settings Screen
-                gpsApp.setHandlerTime(60000);
+                gpsApp.setGpsOffTimeout(60000);
                 Intent intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
                 return true;
@@ -328,7 +328,7 @@ public class GPSActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            GPSApp.setGpsOffTimeout(60000);
+            gpsApp.setGpsOffTimeout(60000);
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             return true;
