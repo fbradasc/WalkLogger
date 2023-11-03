@@ -36,6 +36,4 @@
     <dimen name="TextAppearanceLargeNumbersSize">26sp</dimen>
     <dimen name="TextAppearanceTextUMSize">14sp</dimen>
     <dimen name="TextAppearanceSmallTextSize">11sp</dimen>
-    <dimen name="controls_grid_iconwidth">48dp</dimen>
-    <dimen name="controls_grid_iconheight">48dp</dimen>
 </resources>

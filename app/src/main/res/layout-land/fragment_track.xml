@@ -44,13 +44,13 @@
             android:layout_weight="1">
 
             <TableLayout
+                android:id="@+id/id_tableLayout_TrackName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/id_tableLayout_TrackName"
-                android:paddingTop="3dp"
-                android:paddingBottom="3dp"
                 android:layout_margin="3dp"
-                android:background="@drawable/rounded_corner">
+                android:background="@drawable/rounded_corner"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp">
 
                 <TextView
                     android:id="@+id/id_textView_TrackName"
@@ -62,37 +62,37 @@
                     android:textColor="@color/colorPrimaryLight" />
 
                 <TextView
-                    android:textAppearance="?android:attr/textAppearanceSmall"
                     android:id="@+id/id_textView_TrackIDLabel"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:layout_marginRight="50dp"
-                    android:layout_marginEnd="50dp"
-                    android:layout_marginLeft="50dp"
                     android:layout_marginStart="50dp"
-                    android:textSize="13sp"
-                    android:gravity="center_horizontal" />
+                    android:layout_marginLeft="50dp"
+                    android:layout_marginEnd="50dp"
+                    android:layout_marginRight="50dp"
+                    android:ellipsize="end"
+                    android:gravity="center_horizontal"
+                    android:maxLines="1"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textSize="13sp" />
             </TableLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:id="@+id/id_linearLayout_Annotation_Trackpoints"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
+                android:orientation="horizontal"
                 android:weightSum="2">
 
                 <TableLayout
+                    android:id="@+id/id_TableLayout_Trackpoints"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
                     android:layout_weight="1"
-                    android:id="@+id/id_TableLayout_Trackpoints"
+                    android:background="@drawable/rounded_corner"
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
-                    android:layout_margin="3dp"
-                    android:background="@drawable/rounded_corner"
                     android:visibility="visible">
 
                     <TableRow
@@ -105,30 +105,30 @@
                             android:id="@+id/id_textView_Trackpoints"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/colorPrimaryLight"
-                            android:textAppearance="@style/TextAppearanceLargeNumbers" />
+                            android:textAppearance="@style/TextAppearanceLargeNumbers"
+                            android:textColor="@color/colorPrimaryLight" />
                     </TableRow>
 
                     <TextView
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="@string/trackpoints"
                         android:id="@+id/id_textView_TrackpointsLabel"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="13sp"
-                        android:gravity="center_horizontal" />
+                        android:gravity="center_horizontal"
+                        android:text="@string/trackpoints"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textSize="13sp" />
 
                 </TableLayout>
 
                 <TableLayout
+                    android:id="@+id/id_TableLayout_Annotations"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
                     android:layout_weight="1"
-                    android:id="@+id/id_TableLayout_Annotations"
+                    android:background="@drawable/rounded_corner"
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
-                    android:background="@drawable/rounded_corner"
-                    android:layout_margin="3dp"
                     android:visibility="visible">
 
                     <TableRow
@@ -142,45 +142,45 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
-                            android:textColor="@color/colorPrimaryLight"
-                            android:textAppearance="@style/TextAppearanceLargeNumbers" />
+                            android:textAppearance="@style/TextAppearanceLargeNumbers"
+                            android:textColor="@color/colorPrimaryLight" />
                     </TableRow>
 
                     <TextView
+                        android:id="@+id/id_textView_AnnotationsLabel"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:gravity="center_horizontal"
                         android:text="@string/annotations"
-                        android:id="@+id/id_textView_AnnotationsLabel"
-                        android:textSize="13sp"
-                        android:gravity="center_horizontal" />
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textSize="13sp" />
 
                 </TableLayout>
 
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
+                android:orientation="horizontal"
                 android:weightSum="2">
 
                 <TableLayout
+                    android:id="@+id/id_tableLayout_SpeedMax"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/id_tableLayout_SpeedMax"
                     android:layout_margin="3dp"
+                    android:layout_weight="1"
                     android:background="@drawable/rounded_corner"
                     android:paddingTop="3dp"
-                    android:paddingBottom="3dp"
-                    android:layout_weight="1">
+                    android:paddingBottom="3dp">
 
                     <TableRow
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:gravity="center_horizontal" >
+                        android:gravity="center_horizontal">
 
                         <TextView
                             android:id="@+id/id_textView_SpeedMax"
@@ -189,40 +189,40 @@
                             android:textAppearance="@style/TextAppearanceLargeNumbers" />
 
                         <TextView
+                            android:id="@+id/id_textView_SpeedMaxUM"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearanceLargeUM"
-                            android:id="@+id/id_textView_SpeedMaxUM"
-                            android:layout_weight="0"
+                            android:layout_marginStart="7dp"
                             android:layout_marginLeft="7dp"
-                            android:layout_marginStart="7dp" />
+                            android:layout_weight="0"
+                            android:textAppearance="@style/TextAppearanceLargeUM" />
                     </TableRow>
 
                     <TextView
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="@string/max_speed"
                         android:id="@+id/id_textView_SpeedMaxLabel"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="13sp"
-                        android:gravity="center_horizontal" />
+                        android:gravity="center_horizontal"
+                        android:text="@string/max_speed"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textSize="13sp" />
                 </TableLayout>
 
                 <TableLayout
+                    android:id="@+id/id_tableLayout_AltitudeGap"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/id_tableLayout_AltitudeGap"
                     android:layout_margin="3dp"
+                    android:layout_weight="1"
                     android:background="@drawable/rounded_corner"
                     android:paddingTop="3dp"
-                    android:paddingBottom="3dp"
-                    android:layout_weight="1">
+                    android:paddingBottom="3dp">
 
                     <TableRow
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:gravity="center_horizontal" >
+                        android:gravity="center_horizontal">
 
                         <TextView
                             android:id="@+id/id_textView_AltitudeGap"
@@ -231,23 +231,116 @@
                             android:textAppearance="@style/TextAppearanceLargeNumbers" />
 
                         <TextView
+                            android:id="@+id/id_textView_AltitudeGapUM"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearanceLargeUM"
-                            android:id="@+id/id_textView_AltitudeGapUM"
-                            android:layout_weight="0"
+                            android:layout_marginStart="7dp"
                             android:layout_marginLeft="7dp"
-                            android:layout_marginStart="7dp" />
+                            android:layout_weight="0"
+                            android:textAppearance="@style/TextAppearanceLargeUM" />
                     </TableRow>
 
                     <TextView
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="@string/altitude_gap"
                         android:id="@+id/id_textView_AltitudeGapLabel"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="13sp"
-                        android:gravity="center_horizontal" />
+                        android:gravity="center_horizontal"
+                        android:text="@string/altitude_gap"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textSize="13sp" />
+                </TableLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TableLayout
+                    android:id="@+id/id_tableLayout_AltitudeUp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_corner"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp">
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center_horizontal">
+
+                        <TextView
+                            android:id="@+id/id_textView_AltitudeUp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearanceLargeNumbers" />
+
+                        <TextView
+                            android:id="@+id/id_textView_AltitudeUpUM"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="7dp"
+                            android:layout_marginLeft="7dp"
+                            android:layout_weight="0"
+                            android:textAppearance="@style/TextAppearanceLargeUM" />
+                    </TableRow>
+
+                    <TextView
+                        android:id="@+id/id_textView_AltitudeUpLabel"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="@string/altitude_up"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textSize="13sp" />
+                </TableLayout>
+
+                <TableLayout
+                    android:id="@+id/id_tableLayout_AltitudeDown"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_corner"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp">
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center_horizontal">
+
+                        <TextView
+                            android:id="@+id/id_textView_AltitudeDown"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearanceLargeNumbers" />
+
+                        <TextView
+                            android:id="@+id/id_textView_AltitudeDownUM"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="7dp"
+                            android:layout_marginLeft="7dp"
+                            android:layout_weight="0"
+                            android:textAppearance="@style/TextAppearanceLargeUM" />
+                    </TableRow>
+
+                    <TextView
+                        android:id="@+id/id_textView_AltitudeDownLabel"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="@string/altitude_down"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textSize="13sp" />
                 </TableLayout>
 
             </LinearLayout>
@@ -262,22 +355,22 @@
             android:id="@+id/id_fragmenttrack2">
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:weightSum="2"
-                android:baselineAligned="false">
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:weightSum="2">
 
                 <TableLayout
+                    android:id="@+id/id_tableLayout_Duration"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/id_tableLayout_Duration"
-                    android:paddingTop="3dp"
-                    android:paddingBottom="3dp"
-                    android:background="@drawable/rounded_corner"
                     android:layout_margin="3dp"
                     android:layout_weight="1"
-                    android:baselineAligned="false">
+                    android:background="@drawable/rounded_corner"
+                    android:baselineAligned="false"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp">
 
                     <TextView
                         android:id="@+id/id_textView_Duration"
@@ -287,30 +380,30 @@
                         android:textAppearance="@style/TextAppearanceLargeNumbers" />
 
                     <TextView
+                        android:id="@+id/id_textView_DurationLabel"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:gravity="center_horizontal"
                         android:text="@string/duration"
-                        android:id="@+id/id_textView_DurationLabel"
-                        android:textSize="13sp"
-                        android:gravity="center_horizontal" />
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textSize="13sp" />
                 </TableLayout>
 
                 <TableLayout
+                    android:id="@+id/id_tableLayout_Distance"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/id_tableLayout_Distance"
-                    android:paddingTop="3dp"
-                    android:paddingBottom="3dp"
                     android:layout_margin="3dp"
+                    android:layout_weight="1"
                     android:background="@drawable/rounded_corner"
-                    android:layout_weight="1">
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp">
 
                     <TableRow
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:gravity="center_horizontal" >
+                        android:gravity="center_horizontal">
 
                         <TextView
                             android:id="@+id/id_textView_Distance"
@@ -319,49 +412,49 @@
                             android:textAppearance="@style/TextAppearanceLargeNumbers" />
 
                         <TextView
+                            android:id="@+id/id_textView_DistanceUM"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearanceLargeUM"
-                            android:id="@+id/id_textView_DistanceUM"
-                            android:layout_weight="0"
+                            android:layout_marginStart="7dp"
                             android:layout_marginLeft="7dp"
-                            android:layout_marginStart="7dp" />
+                            android:layout_weight="0"
+                            android:textAppearance="@style/TextAppearanceLargeUM" />
                     </TableRow>
 
                     <TextView
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="@string/distance"
                         android:id="@+id/id_textView_DistanceLabel"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="13sp"
-                        android:gravity="center_horizontal" />
+                        android:gravity="center_horizontal"
+                        android:text="@string/distance"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textSize="13sp" />
                 </TableLayout>
 
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:weightSum="2"
-                android:baselineAligned="false">
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:weightSum="2">
 
                 <TableLayout
+                    android:id="@+id/id_tableLayout_SpeedAvg"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/id_tableLayout_SpeedAvg"
-                    android:paddingTop="3dp"
-                    android:paddingBottom="3dp"
                     android:layout_margin="3dp"
+                    android:layout_weight="1"
                     android:background="@drawable/rounded_corner"
-                    android:layout_weight="1" >
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp">
 
                     <TableRow
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:gravity="center_horizontal" >
+                        android:gravity="center_horizontal">
 
                         <TextView
                             android:id="@+id/id_textView_SpeedAvg"
@@ -370,40 +463,40 @@
                             android:textAppearance="@style/TextAppearanceLargeNumbers" />
 
                         <TextView
+                            android:id="@+id/id_textView_SpeedAvgUM"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearanceLargeUM"
-                            android:id="@+id/id_textView_SpeedAvgUM"
-                            android:layout_weight="0"
+                            android:layout_marginStart="7dp"
                             android:layout_marginLeft="7dp"
-                            android:layout_marginStart="7dp" />
+                            android:layout_weight="0"
+                            android:textAppearance="@style/TextAppearanceLargeUM" />
                     </TableRow>
 
                     <TextView
+                        android:id="@+id/id_textView_SpeedAvgLabel"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:gravity="center_horizontal"
                         android:text="@string/average_speed"
-                        android:id="@+id/id_textView_SpeedAvgLabel"
-                        android:textSize="13sp"
-                        android:gravity="center_horizontal" />
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textSize="13sp" />
                 </TableLayout>
 
                 <TableLayout
+                    android:id="@+id/id_tableLayout_OverallDirection"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/id_tableLayout_OverallDirection"
                     android:layout_margin="3dp"
+                    android:layout_weight="1"
                     android:background="@drawable/rounded_corner"
                     android:paddingTop="3dp"
-                    android:paddingBottom="3dp"
-                    android:layout_weight="1" >
+                    android:paddingBottom="3dp">
 
                     <TableRow
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:gravity="center_horizontal" >
+                        android:gravity="center_horizontal">
 
                         <TextView
                             android:id="@+id/id_textView_OverallDirection"
@@ -412,23 +505,116 @@
                             android:textAppearance="@style/TextAppearanceLargeNumbers" />
 
                         <TextView
+                            android:id="@+id/id_textView_OverallDirectionUM"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textAppearance="@style/TextAppearanceLargeUM"
-                            android:id="@+id/id_textView_OverallDirectionUM"
-                            android:layout_weight="0"
+                            android:layout_marginStart="7dp"
                             android:layout_marginLeft="7dp"
-                            android:layout_marginStart="7dp" />
+                            android:layout_weight="0"
+                            android:textAppearance="@style/TextAppearanceLargeUM" />
                     </TableRow>
 
                     <TextView
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="@string/overall_direction"
                         android:id="@+id/id_textView_OverallDirectionLabel"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="13sp"
-                        android:gravity="center_horizontal" />
+                        android:gravity="center_horizontal"
+                        android:text="@string/overall_direction"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textSize="13sp" />
+                </TableLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:baselineAligned="false"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <TableLayout
+                    android:id="@+id/id_tableLayout_AltitudeMin"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_corner"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp">
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center_horizontal">
+
+                        <TextView
+                            android:id="@+id/id_textView_AltitudeMin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearanceLargeNumbers" />
+
+                        <TextView
+                            android:id="@+id/id_textView_AltitudeMinUM"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="7dp"
+                            android:layout_marginLeft="7dp"
+                            android:layout_weight="0"
+                            android:textAppearance="@style/TextAppearanceLargeUM" />
+                    </TableRow>
+
+                    <TextView
+                        android:id="@+id/id_textView_AltitudeMinLabel"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="@string/altitude_min"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textSize="13sp" />
+                </TableLayout>
+
+                <TableLayout
+                    android:id="@+id/id_tableLayout_AltitudeMax"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_corner"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp">
+
+                    <TableRow
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center_horizontal">
+
+                        <TextView
+                            android:id="@+id/id_textView_AltitudeMax"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/TextAppearanceLargeNumbers" />
+
+                        <TextView
+                            android:id="@+id/id_textView_AltitudeMaxUM"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="7dp"
+                            android:layout_marginLeft="7dp"
+                            android:layout_weight="0"
+                            android:textAppearance="@style/TextAppearanceLargeUM" />
+                    </TableRow>
+
+                    <TextView
+                        android:id="@+id/id_textView_AltitudeMaxLabel"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="@string/altitude_max"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textSize="13sp" />
                 </TableLayout>
 
             </LinearLayout>

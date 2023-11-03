@@ -300,8 +300,7 @@ class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.TrackHolder> {
 
     @Override
     public TrackHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new TrackHolder(LayoutInflater.from(parent.getContext()).inflate(
-                viewType == CARDTYPE_SELECTEDTRACK ? R.layout.card_selectedtrackinfo : R.layout.card_trackinfo, parent, false));
+        return new TrackHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.card_trackinfo, parent, false));
     }
 
 

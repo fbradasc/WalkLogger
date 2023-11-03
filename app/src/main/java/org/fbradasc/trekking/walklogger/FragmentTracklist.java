@@ -405,27 +405,27 @@ public class FragmentTracklist extends Fragment {
                                 + "\n" + getString(R.string.pref_track_stats) + ": " + getString(R.string.pref_track_stats_totaltime) + " | " + getString(R.string.pref_track_stats_movingtime)));
                     }
 
-                    fname = track.getName() + ".kml";
-                    file = new File(Environment.getExternalStorageDirectory() + "/WalkLogger/AppData/", fname);
+                    fname = GPSApplication.getInstance().getFileName(track) + ".kml";
+                    file = new File(GPSApplication.DIRECTORY_TEMP + "/", fname);
                     if (file.exists () && GPSApplication.getInstance().getPrefExportKML()) {
-                        Uri uri = FileProvider.getUriForFile(GPSApplication.getInstance(), "org.fbradasc.trekking.walklogger.fileprovider", file);
+                        Uri uri = FileProvider.getUriForFile(GPSApplication.getInstance(), BuildConfig.APPLICATION_ID + ".provider", file);
                         files.add(uri);
                     }
-                    fname = track.getName() + ".gpx";
-                    file = new File(Environment.getExternalStorageDirectory() + "/WalkLogger/AppData/", fname);
+                    fname = GPSApplication.getInstance().getFileName(track) + ".gpx";
+                    file = new File(GPSApplication.DIRECTORY_TEMP + "/", fname);
                     if (file.exists ()  && GPSApplication.getInstance().getPrefExportGPX()) {
-                        Uri uri = FileProvider.getUriForFile(GPSApplication.getInstance(), "org.fbradasc.trekking.walklogger.fileprovider", file);
+                        Uri uri = FileProvider.getUriForFile(GPSApplication.getInstance(), BuildConfig.APPLICATION_ID + ".provider", file);
                         files.add(uri);
                     }
-                    fname = track.getName() + ".txt";
-                    file = new File(Environment.getExternalStorageDirectory() + "/WalkLogger/AppData/", fname);
+                    fname = GPSApplication.getInstance().getFileName(track) + ".txt";
+                    file = new File(GPSApplication.DIRECTORY_TEMP + "/", fname);
                     if (file.exists ()  && GPSApplication.getInstance().getPrefExportTXT()) {
-                        Uri uri = FileProvider.getUriForFile(GPSApplication.getInstance(), "org.fbradasc.trekking.walklogger.fileprovider", file);
+                        Uri uri = FileProvider.getUriForFile(GPSApplication.getInstance(), BuildConfig.APPLICATION_ID + ".provider", file);
                         files.add(uri);
                     }
                 }
-                fname = track.getName() + "_placemarks.txt";
-                file = new File(Environment.getExternalStorageDirectory() + "/WalkLogger/AppData/", fname);
+                fname = GPSApplication.getInstance().getFileName(track) + "_placemarks.txt";
+                file = new File(GPSApplication.DIRECTORY_TEMP + "/", fname);
                 if (file.exists ()  && GPSApplication.getInstance().getPrefExportPMK()) {
                     if (!send_all_data) {
                         extraText.append(getString(R.string.tab_track) + " " + track.getName()
@@ -457,7 +457,8 @@ public class FragmentTracklist extends Fragment {
                             }
                         }
                     }
-                    Uri uri = Uri.fromFile(file);
+                    // Uri uri = Uri.fromFile(file);
+                    Uri uri = FileProvider.getUriForFile(GPSApplication.getInstance(), BuildConfig.APPLICATION_ID + ".provider", file);
                     files.add(uri);
                 }
                 i++;

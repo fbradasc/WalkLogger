@@ -175,6 +175,7 @@ public class GPSApplication extends Application implements LocationListener, Sen
     private boolean mustUpdatePrefs = true;                      // True if preferences needs to be updated
 
     private boolean isLocationPermissionChecked;                 // If the flag is false the GPSActivity will check for Location Permission
+    private boolean isActivityRecognitionPermissionChecked;      // If the flag is false the GPSActivity will check for Activity Recognition Permission
     private boolean isFirstRun;                                  // True if it is the first run of the app (the DB is empty)
     private boolean isJustStarted = true;                         // True if the application has just been started
     private boolean isMockProvider;                              // True if the location is from mock provider
@@ -424,6 +425,11 @@ public class GPSApplication extends Application implements LocationListener, Sen
                     EventBus.getDefault().post(EventBusMSG.INTENT_SEND);
                 }
                 else
+                if (jobType == JOB_TYPE_SHARE_PLACEMARKS)
+                {
+                    EventBus.getDefault().post(EventBusMSG.INTENT_SEND_PLACEMARKS);
+                }
+                else
                 {
                     EventBus.getDefault().post(EventBusMSG.TOAST_TRACK_EXPORTED);
                 }
@@ -657,6 +663,16 @@ public class GPSApplication extends Application implements LocationListener, Sen
     public void setLocationPermissionChecked(boolean locationPermissionChecked)
     {
         isLocationPermissionChecked = locationPermissionChecked;
+    }
+
+    public boolean isActivityRecognitionPermissionChecked()
+    {
+        return(isActivityRecognitionPermissionChecked);
+    }
+
+    public void setActivityRecognitionPermissionChecked(boolean activityRecognitionPermissionChecked)
+    {
+        isActivityRecognitionPermissionChecked = activityRecognitionPermissionChecked;
     }
 
     public long getLastClickId()
@@ -2109,7 +2125,7 @@ public class GPSApplication extends Application implements LocationListener, Sen
         if (!trackViewer.fileType.isEmpty() )
         {
             file = new File(DIRECTORY_TEMP + "/", exportingTask.getName() + trackViewer.fileType);
-            Uri uri = FileProvider.getUriForFile(GPSApplication.getInstance(), "org.fbradasc.trekking.walklogger.fileprovider", file);
+            Uri uri = FileProvider.getUriForFile(GPSApplication.getInstance(), BuildConfig.APPLICATION_ID + ".provider", file);
             getApplicationContext().grantUriPermission(trackViewer.packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.setDataAndType(uri, trackViewer.mimeType);
             try
@@ -2310,7 +2326,7 @@ public class GPSApplication extends Application implements LocationListener, Sen
 
             case JOB_TYPE_SHARE_PLACEMARKS:
             {
-                exporter = new Exporter(exportingTask, false, false, false, prefExportPMK, Environment.getExternalStorageDirectory() + "/WalkLogger/AppData");
+                exporter = new Exporter(exportingTask, false, false, false, prefExportPMK, DIRECTORY_TEMP);
                 exporter.start();
                 break;
             }

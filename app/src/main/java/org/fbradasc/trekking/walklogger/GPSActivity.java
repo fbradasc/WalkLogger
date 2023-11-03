@@ -172,6 +172,12 @@ public class GPSActivity extends AppCompatActivity {
             gpsApp.setLocationPermissionChecked(true);
         }
 
+        // Check for Location runtime Permissions (for Android 23+)
+        if (!gpsApp.isActivityRecognitionPermissionChecked()) {
+            checkActivityRecognitionPermission();
+            gpsApp.setActivityRecognitionPermissionChecked(true);
+        }
+
         activateActionModeIfNeeded();
 
         if (gpsApp.preferenceFlagExists(GPSApplication.FLAG_RECORDING) && !gpsApp.isRecording()) {
@@ -377,17 +383,24 @@ public class GPSActivity extends AppCompatActivity {
                             gpsApp.setGPSLocationUpdates(false);
                             gpsApp.setGPSLocationUpdates(true);
                             gpsApp.updateGPSLocationFrequency();
-        } else {
+                        } else {
                             Log.w("myApp", "[#] GPSActivity.java - ACCESS_FINE_LOCATION = PERMISSION_DENIED");
-        }
-    }
+                        }
+                    }
                     if (perms.containsKey(Manifest.permission.INTERNET)) {
                         if (perms.get(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED) {
                             Log.w("myApp", "[#] GPSActivity.java - INTERNET = PERMISSION_GRANTED");
                         } else {
                             Log.w("myApp", "[#] GPSActivity.java - INTERNET = PERMISSION_DENIED");
-    }
-        }
+                        }
+                    }
+                    if (perms.containsKey(Manifest.permission.ACTIVITY_RECOGNITION)) {
+                        if (perms.get(Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED) {
+                            Log.w("myApp", "[#] GPSActivity.java - ACTIVITY_RECOGNITION = PERMISSION_GRANTED");
+                        } else {
+                            Log.w("myApp", "[#] GPSActivity.java - ACTIVITY_RECOGNITION = PERMISSION_DENIED");
+                        }
+                    }
                     // TODO: Manage Android 4 storage permission
 //                    if (perms.containsKey(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 //                        if (perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
@@ -630,6 +643,33 @@ public class GPSActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    /**
+     * Checks that the Location permission is granted.
+     * If not, requests it using the standard ActivityCompat.requestPermissions method.
+     */
+    public void checkActivityRecognitionPermission() {
+        Log.w("myApp", "[#] GPSActivity.java - Check Activity Recognition Permission...");
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_DENIED)
+            {
+                //ask for permission
+                requestPermissions(new String[]{Manifest.permission.ACTIVITY_RECOGNITION}, 0);
+            }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED) {
+            Log.w("myApp", "[#] GPSActivity.java - Activity Recognition Permission granted");
+            // Permission Granted
+        } else {
+            Log.w("myApp", "[#] GPSActivity.java - Activity Recognition Permission denied");
+            boolean showRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACTIVITY_RECOGNITION);
+            if (showRationale || !gpsApp.isActivityRecognitionPermissionChecked()) {
+                Log.w("myApp", "[#] GPSActivity.java - Activity Recognition Permission denied, need new check");
+                List<String> listPermissionsNeeded = new ArrayList<>();
+                listPermissionsNeeded.add(Manifest.permission.ACTIVITY_RECOGNITION);
+                ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]) , REQUEST_ID_MULTIPLE_PERMISSIONS);
+            }
+        }
     }
 
     /**
