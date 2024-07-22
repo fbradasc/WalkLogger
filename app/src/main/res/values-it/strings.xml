@@ -101,6 +101,7 @@
     <string name="dlg_add_annotation">Aggiungi annotazione</string>
     <string name="dlg_enter_the_description">Inserisci una descrizione</string>
   <string name="dlg_button_add">Aggiungi</string>
+  <string name="dlg_button_update">Salva</string>
   <!-- Tracklist -->
   <string name="tracklist_empty">Archivio vuoto</string>
   <string name="card_trackinfo_length">Lungh</string>

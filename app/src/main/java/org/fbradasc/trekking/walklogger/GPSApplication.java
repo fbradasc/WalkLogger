@@ -118,12 +118,13 @@ public class GPSApplication extends Application implements LocationListener, Sen
     public static final int JOB_TYPE_DELETE = 4;                    // Bulk Delete
     public static final int JOB_TYPE_SHARE_PLACEMARKS = 5;      // Bulk Share placemark only
 
-    private static final String TASK_SHUTDOWN = "TASK_SHUTDOWN";            // The AsyncTodo Type to Shut down the DB connection
-    private static final String TASK_NEWTRACK = "TASK_NEWTRACK";            // The AsyncTodo Type to create a new track into DB
-    private static final String TASK_ADDLOCATION = "TASK_ADDLOCATION";      // The AsyncTodo Type to create a new track into DB
-    private static final String TASK_ADDPLACEMARK = "TASK_ADDPLACEMARK";    // The AsyncTodo Type to create a new placemark into DB
-    private static final String TASK_UPDATEFIX = "TASK_UPDATEFIX";          // The AsyncTodo Type to update the current FIX
-    private static final String TASK_DELETETRACKS = "TASK_DELETETRACKS";    // The AsyncTodo Type to delete some tracks
+    private static final String TASK_SHUTDOWN = "TASK_SHUTDOWN";                  // The AsyncTodo Type to Shut down the DB connection
+    private static final String TASK_NEWTRACK = "TASK_NEWTRACK";                  // The AsyncTodo Type to create a new track into DB
+    private static final String TASK_ADDLOCATION = "TASK_ADDLOCATION";            // The AsyncTodo Type to create a new track into DB
+    private static final String TASK_INSERTPLACEMARK = "TASK_INSERTPLACEMARK";    // The AsyncTodo Type to insert a new placemark into DB
+    private static final String TASK_UPDATEPLACEMARK = "TASK_UPDATEPLACEMARK";    // The AsyncTodo Type to update the last placemark into DB
+    private static final String TASK_UPDATEFIX = "TASK_UPDATEFIX";                // The AsyncTodo Type to update the current FIX
+    private static final String TASK_DELETETRACKS = "TASK_DELETETRACKS";          // The AsyncTodo Type to delete some tracks
 
     public static final String FLAG_RECORDING = "flagRecording";    // The persistent Flag is set when the app is recording, in order to detect Background Crashes
     public static final String FILETYPE_KML = ".kml";
@@ -1642,6 +1643,8 @@ public class GPSApplication extends Application implements LocationListener, Sen
                 forceRecord = true;                         // + Force to record the new
             }
 
+            if ((isRecording) && (isPlacemarkRequested)) forceRecord = true;                                    //  Adding an annotation while recording also adds a trackpoint (issue #213)
+
             if (gpsStatus == GPS_OK)
             {
                 AsyncTODO ast = new AsyncTODO();
@@ -1706,13 +1709,13 @@ public class GPSApplication extends Application implements LocationListener, Sen
                     if (!isQuickPlacemarkRequest)
                     {
                         // Shows the dialog for placemark creation
-                        EventBus.getDefault().post(EventBusMSG.REQUEST_ADD_PLACEMARK);
+                        EventBus.getDefault().post(EventBusMSG.REQUEST_EDIT_PLACEMARK);
                     }
                     else
                     {
                         // Create a placemark, with an empty description, without showing the dialog
                         setPlacemarkDescription("");
-                        EventBus.getDefault().post(EventBusMSG.ADD_PLACEMARK);
+                        EventBus.getDefault().post(EventBusMSG.INSERT_PLACEMARK);
                     }
 
                     // turn OFF the GPS only if it was explicitly turned ON at placemark insertion request
@@ -1797,10 +1800,20 @@ public class GPSApplication extends Application implements LocationListener, Sen
             return;
         }
 
-        if (msg == EventBusMSG.ADD_PLACEMARK)
+        if (msg == EventBusMSG.INSERT_PLACEMARK)
         {
             AsyncTODO ast = new AsyncTODO();
-            ast.taskType = TASK_ADDPLACEMARK;
+            ast.taskType = TASK_INSERTPLACEMARK;
+            ast.location = currentPlacemark;
+            currentPlacemark.setDescription(placemarkDescription);
+            asyncTODOQueue.add(ast);
+            return;
+        }
+
+        if (msg == EventBusMSG.UPDATE_PLACEMARK)
+        {
+            AsyncTODO ast = new AsyncTODO();
+            ast.taskType = TASK_UPDATEPLACEMARK;
             ast.location = currentPlacemark;
             currentPlacemark.setDescription(placemarkDescription);
             asyncTODOQueue.add(ast);
@@ -2940,8 +2953,8 @@ public class GPSApplication extends Application implements LocationListener, Sen
                     }
                 }
 
-                // Task: Add a placemark to current track
-                if (asyncTODO.taskType.equals(TASK_ADDPLACEMARK) )
+                // Task: insert a placemark to current track
+                if (asyncTODO.taskType.equals(TASK_INSERTPLACEMARK) )
                 {
                     locationExtended = new LocationExtended(asyncTODO.location.getLocation() );
                     locationExtended.setDescription(asyncTODO.location.getDescription() );
@@ -2957,6 +2970,14 @@ public class GPSApplication extends Application implements LocationListener, Sen
                     {
                         UpdateTrackList();
                     }
+                }
+
+                // Task: update the last placemark to current track
+                if (asyncTODO.taskType.equals(TASK_UPDATEPLACEMARK) )
+                {
+                    locationExtended = new LocationExtended(asyncTODO.location.getLocation() );
+                    locationExtended.setDescription(asyncTODO.location.getDescription() );
+                    gpsDataBase.updateLastPlacemarkToTrack(locationExtended, track);
                 }
 
                 // Task: Update current Fix

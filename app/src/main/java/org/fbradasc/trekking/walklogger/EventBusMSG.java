@@ -32,8 +32,8 @@ public class EventBusMSG {
     static final short UPDATE_TRACK                     =   5;  // Notify that the current track stats are updated
     static final short UPDATE_TRACKLIST                 =   6;  // Notify that the tracklist is changed
     static final short UPDATE_SETTINGS                  =   7;  // Tell that settings are changed
-    static final short REQUEST_ADD_PLACEMARK            =   8;  // The user ask to add a placemark
-    static final short ADD_PLACEMARK                    =   9;  // The placemark is available
+    static final short REQUEST_EDIT_PLACEMARK           =   8;  // The user ask to add a placemark
+    static final short INSERT_PLACEMARK                 =   9;  // The placemark is available as new
     static final short APPLY_SETTINGS                   =  10;  // The new settings must be applied
     static final short TOAST_TRACK_EXPORTED             =  11;  // The exporter has finished to export the track, shows toast
     static final short UPDATE_JOB_PROGRESS              =  13;  // Update the progress of the current Job
@@ -41,6 +41,7 @@ public class EventBusMSG {
     static final short UPDATE_ACTIONBAR                 =  15;  // Notify that the actionbar must be updated
     static final short REFRESH_TRACKLIST                =  16;  // Refresh the tracklist, without update it from DB
     static final short REFRESH_TRACKTYPE                =  17;  // Refresh the track type on the Edit Details dialog
+    static final short UPDATE_PLACEMARK                 =  19;  // The placemark is available as replacement
 
     static final short DELETE_TRACK                     =  20;  // Delete the track (given id)
     static final short EXPORT_TRACK                     =  21;  // Export the track (given id)

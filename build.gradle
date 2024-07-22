@@ -1,12 +1,15 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+    ext {
+        agp_version = '8.5.1'
+    }
     repositories {
         google()
         gradlePluginPortal()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath "com.android.tools.build:gradle:$agp_version"
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -26,17 +29,6 @@ allprojects {
     }
 }
 
-//task clean(type: Delete) {
-//    delete rootProject.buildDir
-//}
-
-// https://codeberg.org/Bazsalanszky/Eternity/commit/05123c70682e5988ad5f0ff111f97b66a87d8806
-// Patch that solves the problem with EventBus and Reproducible Builds
-
-tasks.whenTaskAdded {
-    if (name.contains("ArtProfile")) {
-        enabled = false
-    }
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
-
-// end patch

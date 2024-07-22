@@ -585,6 +585,31 @@ class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     /**
+     * Updates the last Annotation (Placemark) to a Track.
+     *
+     * @param placemark the placemark data
+     * @param track the Track that receives the placemark
+     */
+    public void updateLastPlacemarkToTrack(LocationExtended placemark, Track track) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues locvalues = new ContentValues();
+        locvalues.put(KEY_LOCATION_NAME, placemark.getDescription());
+
+        try {
+            db.beginTransaction();
+            long lastPlacemarkID = track.getNumberOfPlacemarks()-1;
+            db.update(TABLE_PLACEMARKS, locvalues, KEY_LOCATION_NUMBER + " = ?",
+                    new String[] { String.valueOf(lastPlacemarkID) });    // Update the corresponding Track
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+
+        //Log.w("myApp", "[#] DatabaseHandler.java - addLocation: Location " + track.getNumberOfLocations() + " added into track " + track.getID());
+    }
+
+    /**
      * Adds a new Annotation (Placemark) to a Track and update the corresponding Track table.
      * The two operations will be done in a single transaction, to avoid any data loss or corruption.
      *

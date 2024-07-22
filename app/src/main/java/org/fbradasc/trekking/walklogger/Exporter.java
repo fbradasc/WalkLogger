@@ -60,7 +60,7 @@ class Exporter extends Thread {
     private final boolean egmAltitudeCorrection;
     private final int getPrefKMLAltitudeMode;
     private final int getPrefGPXVersion;
-    private boolean txtFirstTrackpointFlag = true;
+    private boolean txtFirstTrackPointFlag = true;
 
     private DocumentFile kmlFile;
     private DocumentFile gpxFile;
@@ -146,9 +146,9 @@ class Exporter extends Thread {
                 Log.w("myApp", "[#] Exporter.java - Export " + txtFile.getUri().toString());
             }
             if (exportPMK) {
-                pmkFile = pickedDir.findFile(fName + "_placemarks.txt");
+                pmkFile = pickedDir.findFile(fName + "_placemarks.csv");
                 if ((pmkFile != null) && (pmkFile.exists())) pmkFile.delete();
-                pmkFile = pickedDir.createFile("", fName + "_placemarks.txt");
+                pmkFile = pickedDir.createFile("", fName + "_placemarks.csv");
                 Log.w("myApp", "[#] Exporter.java - Export " + pmkFile.getUri().toString());
             }
         } catch (SecurityException e) {
@@ -462,7 +462,7 @@ class Exporter extends Thread {
             }
 
             if (exportPMK) {
-                pmkBW.write("#Date,Time,Film,ASA,EV,Zone,TV,AV,FV,Description" + newLine);
+                pmkBW.write("#Date,Time,Film,ASA,EV,Zone,TV,AV,FV,Description,TrackName" + newLine);
             }
 
             String formattedLatitude = "";
@@ -583,9 +583,10 @@ class Exporter extends Thread {
 
                             // Placemarks alone
                             if (exportPMK) {
-                                //timestamp,human readable time,film,EV/TV/AV/FV,description
+                                //timestamp,human readable time,film,EV/TV/AV/FV,description,track name
                                 pmkBW.write(dfdtPMK.format(loc.getLocation().getTime()) + ",");
-                                pmkBW.write(loc.getDescription().replace("\n",","));
+                                pmkBW.write(loc.getDescription().replace("\n",",") + ",");
+                                pmkBW.write(track.getDescription().replace("\n"," "));
                                 pmkBW.write(newLine);
                             }
 
@@ -785,10 +786,10 @@ class Exporter extends Thread {
                         if (loc.getNumberOfSatellites() > 0)
                             txtBW.write(String.valueOf(loc.getNumberOfSatellites()));
                         txtBW.write(",");
-                        if (txtFirstTrackpointFlag) {           // First trackpoint of the track: add the description
+                        if (txtFirstTrackPointFlag) {           // First trackpoint of the track: add the description
                             if (track.getDescription().isEmpty()) txtBW.write(track.getName() + ",GPS Logger: " + track.getName());
                             else txtBW.write(track.getName() + ",GPS Logger: " + track.getName() + " - " + track.getDescription().replace(",", "_"));
-                            txtFirstTrackpointFlag = false;
+                            txtFirstTrackPointFlag = false;
                         } else txtBW.write(",");
                         txtBW.write(newLine);
                     }

@@ -119,6 +119,7 @@
     <string name="dlg_add_annotation">Add annotation</string>
     <string name="dlg_enter_the_description">Enter the description</string>
     <string name="dlg_button_add">Add</string>
+    <string name="dlg_button_update">Update</string>
 
     <!-- Tracklist -->
     <string name="tracklist_empty">Tracklist Empty</string>

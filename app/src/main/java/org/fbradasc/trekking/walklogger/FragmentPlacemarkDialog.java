@@ -41,6 +41,10 @@ import android.widget.RadioGroup;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * The dialog that appears when the user adds a new Annotation (Placemark).
  */
@@ -135,6 +139,44 @@ public class FragmentPlacemarkDialog extends DialogFragment implements View.OnCl
             public void run()
             {
                 if (isAdded()) {
+                    List<LocationExtended> placemarkList = new ArrayList<>(1);
+
+                    final GPSApplication gpsApp = GPSApplication.getInstance();
+                    final Track track = gpsApp.getCurrentTrack();
+
+                    if (null != track) {
+                        placemarkList.addAll(gpsApp.gpsDataBase.getPlacemarksList(track.getId(),
+                                track.getNumberOfPlacemarks() - 1,
+                                track.getNumberOfPlacemarks() - 1));
+
+                        if (!placemarkList.isEmpty()) {
+                            try {
+                                LocationExtended loc = placemarkList.get(0);
+                                String desc = loc.getDescription().replace("\n", ",");
+                                List<String> items = Arrays.asList(desc.split(","));
+                                int i = 0;
+                                String lFilm_Data = items.get(i); ++i;
+                                String lP_Data_Sv = items.get(i); ++i;
+                                String lP_Data_Ev = items.get(i); ++i;
+                                String lP_Data_ZS = items.get(i); ++i;
+                                String lP_Data_Tv = items.get(i); ++i;
+                                String lP_Data_Av = items.get(i); ++i;
+                                String lP_Data_Fv = items.get(i); ++i;
+                                String lDesc      = items.get(i);
+
+                                mFilm_Data  = lFilm_Data;
+                                mP_Data_Sv  = lP_Data_Sv;
+                                mP_Data_Ev  = lP_Data_Ev;
+                                mP_Data_ZS  = lP_Data_ZS;
+                                mP_Data_Tv  = lP_Data_Tv;
+                                mP_Data_Av  = lP_Data_Av;
+                                mP_Data_Fv  = lP_Data_Fv;
+                                mDesc       = lDesc     ;
+                            } catch (Exception e) {
+                            }
+                        }
+                    }
+
                     if (!mFilm_Data.isEmpty()) Film_Data_EditText.setText(mFilm_Data);
                     if (!mP_Data_Sv.isEmpty()) P_Data_Sv_EditText.setText(mP_Data_Sv);
                     if (!mP_Data_Ev.isEmpty()) P_Data_Ev_EditText.setText(mP_Data_Ev);
@@ -145,27 +187,27 @@ public class FragmentPlacemarkDialog extends DialogFragment implements View.OnCl
 
                     RG_ZoneSystem.clearCheck();
 
-                    if (mP_Data_ZS == "0"   ) { RB_ZS_0 .setChecked(true);}
+                    if (mP_Data_ZS.equals("0")) { RB_ZS_0 .setChecked(true);}
                     else
-                    if (mP_Data_ZS == "I"   ) { RB_ZS_1 .setChecked(true);}
+                    if (mP_Data_ZS.equals("I"   )) { RB_ZS_1 .setChecked(true);}
                     else
-                    if (mP_Data_ZS == "II"  ) { RB_ZS_2 .setChecked(true);}
+                    if (mP_Data_ZS.equals("II"  )) { RB_ZS_2 .setChecked(true);}
                     else
-                    if (mP_Data_ZS == "III" ) { RB_ZS_3 .setChecked(true);}
+                    if (mP_Data_ZS.equals("III" )) { RB_ZS_3 .setChecked(true);}
                     else
-                    if (mP_Data_ZS == "IV"  ) { RB_ZS_4 .setChecked(true);}
+                    if (mP_Data_ZS.equals("IV"  )) { RB_ZS_4 .setChecked(true);}
                     else
-                    if (mP_Data_ZS == "V"   ) { RB_ZS_5 .setChecked(true);}
+                    if (mP_Data_ZS.equals("V"   )) { RB_ZS_5 .setChecked(true);}
                     else
-                    if (mP_Data_ZS == "VI"  ) { RB_ZS_6 .setChecked(true);}
+                    if (mP_Data_ZS.equals("VI"  )) { RB_ZS_6 .setChecked(true);}
                     else
-                    if (mP_Data_ZS == "VII" ) { RB_ZS_7 .setChecked(true);}
+                    if (mP_Data_ZS.equals("VII" )) { RB_ZS_7 .setChecked(true);}
                     else
-                    if (mP_Data_ZS == "VIII") { RB_ZS_8 .setChecked(true);}
+                    if (mP_Data_ZS.equals("VIII")) { RB_ZS_8 .setChecked(true);}
                     else
-                    if (mP_Data_ZS == "IX"  ) { RB_ZS_9 .setChecked(true);}
+                    if (mP_Data_ZS.equals("IX"  )) { RB_ZS_9 .setChecked(true);}
                     else
-                    if (mP_Data_ZS == "X"   ) { RB_ZS_10.setChecked(true);}
+                    if (mP_Data_ZS.equals("X"   )) { RB_ZS_10.setChecked(true);}
 
                     P_Data_Ev_EditText.requestFocus();
                     InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -180,48 +222,20 @@ public class FragmentPlacemarkDialog extends DialogFragment implements View.OnCl
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         if (isAdded()) {
-                            mFilm_Data = Film_Data_EditText.getText().toString().trim();
-                            mP_Data_Ev = P_Data_Ev_EditText.getText().toString().trim();
-                            mP_Data_Tv = P_Data_Tv_EditText.getText().toString().trim();
-                            mP_Data_Av = P_Data_Av_EditText.getText().toString().trim();
-                            mP_Data_Fv = P_Data_Fv_EditText.getText().toString().trim();
-                            mP_Data_Sv = P_Data_Sv_EditText.getText().toString().trim();
-                            mDesc      = etDescription     .getText().toString().trim();
-                            mP_Data_ZS = "";
-
-                            switch (RG_ZoneSystem.getCheckedRadioButtonId())
-                            {
-                                case R.id.rb_zs_0 : mP_Data_ZS = "0"   ; break;
-                                case R.id.rb_zs_1 : mP_Data_ZS = "I"   ; break;
-                                case R.id.rb_zs_2 : mP_Data_ZS = "II"  ; break;
-                                case R.id.rb_zs_3 : mP_Data_ZS = "III" ; break;
-                                case R.id.rb_zs_4 : mP_Data_ZS = "IV"  ; break;
-                                case R.id.rb_zs_5 : mP_Data_ZS = "V"   ; break;
-                                case R.id.rb_zs_6 : mP_Data_ZS = "VI"  ; break;
-                                case R.id.rb_zs_7 : mP_Data_ZS = "VII" ; break;
-                                case R.id.rb_zs_8 : mP_Data_ZS = "VIII"; break;
-                                case R.id.rb_zs_9 : mP_Data_ZS = "IX"  ; break;
-                                case R.id.rb_zs_10: mP_Data_ZS = "X"   ; break;
-                                default           : mP_Data_ZS = ""    ; break;
-                            }
-
-                            String placemarkDescription =
-                                    mFilm_Data + "\n" +
-                                    mP_Data_Sv + ","  +
-                                    mP_Data_Ev + ","  +
-                                    mP_Data_ZS + "\n" +
-                                    mP_Data_Tv + ","  +
-                                    mP_Data_Av + ","  +
-                                    mP_Data_Fv + "\n" +
-                                    mDesc;
-                            final GPSApplication gpsApp = GPSApplication.getInstance();
-                            gpsApp.setPlacemarkDescription(placemarkDescription.trim());
-                            EventBus.getDefault().post(EventBusMSG.ADD_PLACEMARK);
-                            //Log.w("myApp", "[#] FragmentPlacemarkDialog.java - posted ADD_PLACEMARK: " + placemarkDescription);
+                            insertOrUpdate(EventBusMSG.INSERT_PLACEMARK);
                         }
                     }
                 })
-                .setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                .setNeutralButton(R.string.dlg_button_update, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        if (isAdded()) {
+                            insertOrUpdate(EventBusMSG.UPDATE_PLACEMARK);
+                        }
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                     }
@@ -233,5 +247,45 @@ public class FragmentPlacemarkDialog extends DialogFragment implements View.OnCl
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+    }
+
+    private void insertOrUpdate(short message) {
+        mFilm_Data = Film_Data_EditText.getText().toString().trim();
+        mP_Data_Ev = P_Data_Ev_EditText.getText().toString().trim();
+        mP_Data_Tv = P_Data_Tv_EditText.getText().toString().trim();
+        mP_Data_Av = P_Data_Av_EditText.getText().toString().trim();
+        mP_Data_Fv = P_Data_Fv_EditText.getText().toString().trim();
+        mP_Data_Sv = P_Data_Sv_EditText.getText().toString().trim();
+        mDesc      = etDescription     .getText().toString().trim();
+        mP_Data_ZS = "";
+
+        switch (RG_ZoneSystem.getCheckedRadioButtonId())
+        {
+            case R.id.rb_zs_0 : mP_Data_ZS = "0"   ; break;
+            case R.id.rb_zs_1 : mP_Data_ZS = "I"   ; break;
+            case R.id.rb_zs_2 : mP_Data_ZS = "II"  ; break;
+            case R.id.rb_zs_3 : mP_Data_ZS = "III" ; break;
+            case R.id.rb_zs_4 : mP_Data_ZS = "IV"  ; break;
+            case R.id.rb_zs_5 : mP_Data_ZS = "V"   ; break;
+            case R.id.rb_zs_6 : mP_Data_ZS = "VI"  ; break;
+            case R.id.rb_zs_7 : mP_Data_ZS = "VII" ; break;
+            case R.id.rb_zs_8 : mP_Data_ZS = "VIII"; break;
+            case R.id.rb_zs_9 : mP_Data_ZS = "IX"  ; break;
+            case R.id.rb_zs_10: mP_Data_ZS = "X"   ; break;
+            default           : mP_Data_ZS = ""    ; break;
+        }
+
+        String placemarkDescription =
+                mFilm_Data + "\n" +
+                        mP_Data_Sv + ","  +
+                        mP_Data_Ev + ","  +
+                        mP_Data_ZS + "\n" +
+                        mP_Data_Tv + ","  +
+                        mP_Data_Av + ","  +
+                        mP_Data_Fv + "\n" +
+                        mDesc;
+        final GPSApplication gpsApp = GPSApplication.getInstance();
+        gpsApp.setPlacemarkDescription(placemarkDescription.trim());
+        EventBus.getDefault().post(message);
     }
 }
