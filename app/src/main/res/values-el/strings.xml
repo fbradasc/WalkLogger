@@ -93,7 +93,7 @@
     <string name="menu_online_help">Online βοήθεια</string>
     <string name="menu_shutdown">Τερματισμός</string>
     <!-- Annotation Creation dialog -->
-    <string name="dlg_add_annotation">Προσθήκη σημείωσης</string>
+    <string name="dlg_add_annotation">Σημείωσης</string>
     <string name="dlg_enter_the_description">Εισάγετε την περιγραφή</string>
     <string name="dlg_button_add">Προσθήκη</string>
     <!-- Tracklist -->

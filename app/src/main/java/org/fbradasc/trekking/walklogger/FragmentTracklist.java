@@ -424,7 +424,7 @@ public class FragmentTracklist extends Fragment {
                         files.add(uri);
                     }
                 }
-                fname = GPSApplication.getInstance().getFileName(track) + "_placemarks.txt";
+                fname = GPSApplication.getInstance().getFileName(track) + "_placemarks.csv";
                 file = new File(GPSApplication.DIRECTORY_TEMP + "/", fname);
                 if (file.exists ()  && GPSApplication.getInstance().getPrefExportPMK()) {
                     if (!send_all_data) {

@@ -174,7 +174,7 @@ public class GPSActivity extends AppCompatActivity {
 
         // Check for Location runtime Permissions (for Android 23+)
         if (!gpsApp.isActivityRecognitionPermissionChecked()) {
-            checkLocationAndNotificationPermission();
+            checkActivityRecognitionPermission();
             gpsApp.setActivityRecognitionPermissionChecked(true);
         }
 
@@ -643,6 +643,33 @@ public class GPSActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    /**
+     * Checks that the Location permission is granted.
+     * If not, requests it using the standard ActivityCompat.requestPermissions method.
+     */
+    public void checkActivityRecognitionPermission() {
+        Log.w("myApp", "[#] GPSActivity.java - Check Activity Recognition Permission...");
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_DENIED)
+            {
+                //ask for permission
+                requestPermissions(new String[]{Manifest.permission.ACTIVITY_RECOGNITION}, 0);
+            }
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED) {
+            Log.w("myApp", "[#] GPSActivity.java - Activity Recognition Permission granted");
+            // Permission Granted
+        } else {
+            Log.w("myApp", "[#] GPSActivity.java - Activity Recognition Permission denied");
+            boolean showRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACTIVITY_RECOGNITION);
+            if (showRationale || !gpsApp.isActivityRecognitionPermissionChecked()) {
+                Log.w("myApp", "[#] GPSActivity.java - Activity Recognition Permission denied, need new check");
+                List<String> listPermissionsNeeded = new ArrayList<>();
+                listPermissionsNeeded.add(Manifest.permission.ACTIVITY_RECOGNITION);
+                ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]) , REQUEST_ID_MULTIPLE_PERMISSIONS);
+            }
+        }
     }
 
     /**

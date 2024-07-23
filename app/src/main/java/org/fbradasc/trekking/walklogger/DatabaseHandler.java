@@ -590,17 +590,21 @@ class DatabaseHandler extends SQLiteOpenHelper {
      * @param placemark the placemark data
      * @param track the Track that receives the placemark
      */
-    public void updateLastPlacemarkToTrack(LocationExtended placemark, Track track) {
+    public void updatePlacemarkToTrack(LocationExtended placemark, Track track) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues locvalues = new ContentValues();
         locvalues.put(KEY_LOCATION_NAME, placemark.getDescription());
 
+        long placemarkID = placemark.getId();
+        if (placemarkID <= 0) {
+            placemarkID = track.getNumberOfPlacemarks();
+        }
+
         try {
             db.beginTransaction();
-            long lastPlacemarkID = track.getNumberOfPlacemarks()-1;
             db.update(TABLE_PLACEMARKS, locvalues, KEY_LOCATION_NUMBER + " = ?",
-                    new String[] { String.valueOf(lastPlacemarkID) });    // Update the corresponding Track
+                    new String[] { String.valueOf(placemarkID) });    // Update the corresponding Track
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
@@ -833,6 +837,67 @@ class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     /**
+     * Returns the Annotation (Placemark) associated to a specified Track,
+     * with Placemark ID
+     *
+     * @param trackID the ID of the Track
+     * @param placemarkID the ID of the placemark
+     *
+     * @return the placemark
+     */
+    public LocationExtended getPlacemark(long trackID, long placemarkID) {
+
+        LocationExtended placemark = null;
+
+        String selectQuery = "SELECT  * FROM " + TABLE_PLACEMARKS + " WHERE "
+                + KEY_TRACK_ID + " = " + trackID + " AND "
+                + KEY_LOCATION_NUMBER + " = " + placemarkID;
+
+        //Log.w("myApp", "[#] DatabaseHandler.java - getPlacemark(" + trackID + ", " + placemarkID + ") ==> " + selectQuery);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        double lcdata_double;
+        float lcdata_float;
+
+        if (cursor != null) {
+            // get the first result
+            if (cursor.moveToFirst()) {
+                Location lc = new Location("DB");
+                lc.setLatitude(cursor.getDouble(I_PLACEMARK_LATITUDE));
+                lc.setLongitude(cursor.getDouble(I_PLACEMARK_LONGITUDE));
+
+                lcdata_double = cursor.getDouble(I_PLACEMARK_ALTITUDE);
+                if (lcdata_double != NOT_AVAILABLE) lc.setAltitude(lcdata_double);
+                //else lc.removeAltitude();
+
+                lcdata_float = cursor.getFloat(I_PLACEMARK_SPEED);
+                if (lcdata_float != NOT_AVAILABLE) lc.setSpeed(lcdata_float);
+                //else lc.removeSpeed();
+
+                lcdata_float = cursor.getFloat(I_PLACEMARK_ACCURACY);
+                if (lcdata_float != NOT_AVAILABLE) lc.setAccuracy(lcdata_float);
+                //else lc.removeAccuracy();
+
+                lcdata_float = cursor.getFloat(I_PLACEMARK_BEARING);
+                if (lcdata_float != NOT_AVAILABLE) lc.setBearing(lcdata_float);
+                //else lc.removeBearing();
+
+                lc.setTime(cursor.getLong(I_PLACEMARK_TIME));
+
+                placemark = new LocationExtended(lc);
+                placemark.setNumberOfSatellites(cursor.getInt(I_PLACEMARK_NUMBEROFSATELLITES));
+                placemark.setNumberOfSatellitesUsedInFix(cursor.getInt(I_PLACEMARK_NUMBEROFSATELLITESUSEDINFIX));
+                placemark.setNumberOfSteps(cursor.getInt(I_PLACEMARK_NUMBEROFSTEPS));
+                placemark.setDescription(cursor.getString(I_PLACEMARK_NAME));
+                placemark.setId(cursor.getInt(I_LOCATION_NUMBER));
+            }
+            cursor.close();
+        }
+        return placemark;
+    }
+
+    /**
      * Returns a list of Annotations (Placemarks) associated to a specified Track,
      * with Placemark ID from startNumber to endNumber.
      * Both limits are included.
@@ -890,6 +955,7 @@ class DatabaseHandler extends SQLiteOpenHelper {
                     extdloc.setNumberOfSatellitesUsedInFix(cursor.getInt(I_PLACEMARK_NUMBEROFSATELLITESUSEDINFIX));
                     extdloc.setNumberOfSteps(cursor.getInt(I_PLACEMARK_NUMBEROFSTEPS));
                     extdloc.setDescription(cursor.getString(I_PLACEMARK_NAME));
+                    extdloc.setId(cursor.getInt(I_LOCATION_NUMBER));
 
                     placemarkList.add(extdloc); // Add Location to list
                 } while (cursor.moveToNext());

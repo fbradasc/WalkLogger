@@ -116,7 +116,7 @@
     <string name="menu_shutdown">Shutdown</string>
 
     <!-- Annotation Creation dialog -->
-    <string name="dlg_add_annotation">Add annotation</string>
+    <string name="dlg_add_annotation">Annotation</string>
     <string name="dlg_enter_the_description">Enter the description</string>
     <string name="dlg_button_add">Add</string>
     <string name="dlg_button_update">Update</string>

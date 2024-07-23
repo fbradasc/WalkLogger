@@ -98,7 +98,7 @@
     <string name="menu_online_help">Guida in linea</string>
   <string name="menu_shutdown">Spegni</string>
     <!-- Annotation Creation dialog -->
-    <string name="dlg_add_annotation">Aggiungi annotazione</string>
+    <string name="dlg_add_annotation">Annotazione</string>
     <string name="dlg_enter_the_description">Inserisci una descrizione</string>
   <string name="dlg_button_add">Aggiungi</string>
   <string name="dlg_button_update">Salva</string>

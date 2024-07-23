@@ -93,7 +93,7 @@
     <string name="menu_online_help">Онлайн справка</string>
     <string name="menu_shutdown">Выключить</string>
     <!-- Annotation Creation dialog -->
-    <string name="dlg_add_annotation">Добавить метку</string>
+    <string name="dlg_add_annotation">Метку</string>
     <string name="dlg_enter_the_description">Введите описание</string>
     <string name="dlg_button_add">Добавить</string>
     <!-- Tracklist -->

@@ -1536,6 +1536,22 @@ public class GPSApplication extends Application implements LocationListener, Sen
         }
     }
 
+    @Subscribe
+    public void onEvent(EventBusMSGLong msg)
+    {
+        if (msg.eventBusMSG == EventBusMSG.UPDATE_PLACEMARK)
+        {
+            LocationExtended loc = gpsDataBase.getPlacemark(msg.trackID, msg.value);
+            if (loc != null) {
+                AsyncTODO ast = new AsyncTODO();
+                loc.setDescription(placemarkDescription);
+                ast.taskType = TASK_UPDATEPLACEMARK;
+                ast.location = loc;
+                asyncTODOQueue.add(ast);
+            }
+            return;
+        }
+    }
     // --------------------------------------------------------------------------- LocationListener
 
     @Override
@@ -1802,20 +1818,10 @@ public class GPSApplication extends Application implements LocationListener, Sen
 
         if (msg == EventBusMSG.INSERT_PLACEMARK)
         {
+            currentPlacemark.setDescription(placemarkDescription);
             AsyncTODO ast = new AsyncTODO();
             ast.taskType = TASK_INSERTPLACEMARK;
             ast.location = currentPlacemark;
-            currentPlacemark.setDescription(placemarkDescription);
-            asyncTODOQueue.add(ast);
-            return;
-        }
-
-        if (msg == EventBusMSG.UPDATE_PLACEMARK)
-        {
-            AsyncTODO ast = new AsyncTODO();
-            ast.taskType = TASK_UPDATEPLACEMARK;
-            ast.location = currentPlacemark;
-            currentPlacemark.setDescription(placemarkDescription);
             asyncTODOQueue.add(ast);
             return;
         }
@@ -2977,7 +2983,8 @@ public class GPSApplication extends Application implements LocationListener, Sen
                 {
                     locationExtended = new LocationExtended(asyncTODO.location.getLocation() );
                     locationExtended.setDescription(asyncTODO.location.getDescription() );
-                    gpsDataBase.updateLastPlacemarkToTrack(locationExtended, track);
+                    locationExtended.setId(asyncTODO.location.getId());
+                    gpsDataBase.updatePlacemarkToTrack(locationExtended, track);
                 }
 
                 // Task: Update current Fix

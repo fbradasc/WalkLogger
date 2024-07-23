@@ -38,6 +38,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.graphics.drawable.Drawable;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -95,9 +96,59 @@ public class FragmentPlacemarkDialog extends DialogFragment implements View.OnCl
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        LocationExtended placemark = null;
+
+        final GPSApplication gpsApp = GPSApplication.getInstance();
+        final Track track = gpsApp.getCurrentTrack();
+        long lTrackID = -1;
+        long lPmarkID = 0;
+
+        if (null != track) {
+            lTrackID = track.getId();
+            lPmarkID = track.getNumberOfPlacemarks();
+
+            placemark = gpsApp.gpsDataBase.getPlacemark(lTrackID,lPmarkID);
+
+            if (null != placemark) {
+                try {
+                    String desc = placemark.getDescription().replace("\n", ",");
+                    List<String> items = Arrays.asList(desc.split(","));
+
+                    int i = 0;
+                    String lFilm_Data = items.get(i); ++i;
+                    String lP_Data_Sv = items.get(i); ++i;
+                    String lP_Data_Ev = items.get(i); ++i;
+                    String lP_Data_ZS = items.get(i); ++i;
+                    String lP_Data_Tv = items.get(i); ++i;
+                    String lP_Data_Av = items.get(i); ++i;
+                    String lP_Data_Fv = items.get(i); ++i;
+                    String lDesc      = items.get(i);
+
+                    mFilm_Data  = lFilm_Data;
+                    mP_Data_Sv  = lP_Data_Sv;
+                    mP_Data_Ev  = lP_Data_Ev;
+                    mP_Data_ZS  = lP_Data_ZS;
+                    mP_Data_Tv  = lP_Data_Tv;
+                    mP_Data_Av  = lP_Data_Av;
+                    mP_Data_Fv  = lP_Data_Fv;
+                    mDesc       = lDesc     ;
+                } finally {
+                }
+            }
+        }
+
+        final long trackID = lTrackID;
+        final long pmarkID = lPmarkID;
+
+        if (lPmarkID <= 0) {
+            lPmarkID = 1;
+        }
+
+        String title = getString(R.string.dlg_add_annotation) + " #" + lPmarkID;
+
         AlertDialog.Builder createPlacemarkAlert = new AlertDialog.Builder(getActivity());
-        createPlacemarkAlert.setTitle(R.string.dlg_add_annotation);
-        createPlacemarkAlert.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_add_location_24dp, getActivity().getTheme()));
+        createPlacemarkAlert.setTitle(title);
+        createPlacemarkAlert.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_edit_24, getActivity().getTheme()));
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         final View view = (View) inflater.inflate(R.layout.fragment_placemark_dialog, null);
@@ -139,44 +190,6 @@ public class FragmentPlacemarkDialog extends DialogFragment implements View.OnCl
             public void run()
             {
                 if (isAdded()) {
-                    List<LocationExtended> placemarkList = new ArrayList<>(1);
-
-                    final GPSApplication gpsApp = GPSApplication.getInstance();
-                    final Track track = gpsApp.getCurrentTrack();
-
-                    if (null != track) {
-                        placemarkList.addAll(gpsApp.gpsDataBase.getPlacemarksList(track.getId(),
-                                track.getNumberOfPlacemarks() - 1,
-                                track.getNumberOfPlacemarks() - 1));
-
-                        if (!placemarkList.isEmpty()) {
-                            try {
-                                LocationExtended loc = placemarkList.get(0);
-                                String desc = loc.getDescription().replace("\n", ",");
-                                List<String> items = Arrays.asList(desc.split(","));
-                                int i = 0;
-                                String lFilm_Data = items.get(i); ++i;
-                                String lP_Data_Sv = items.get(i); ++i;
-                                String lP_Data_Ev = items.get(i); ++i;
-                                String lP_Data_ZS = items.get(i); ++i;
-                                String lP_Data_Tv = items.get(i); ++i;
-                                String lP_Data_Av = items.get(i); ++i;
-                                String lP_Data_Fv = items.get(i); ++i;
-                                String lDesc      = items.get(i);
-
-                                mFilm_Data  = lFilm_Data;
-                                mP_Data_Sv  = lP_Data_Sv;
-                                mP_Data_Ev  = lP_Data_Ev;
-                                mP_Data_ZS  = lP_Data_ZS;
-                                mP_Data_Tv  = lP_Data_Tv;
-                                mP_Data_Av  = lP_Data_Av;
-                                mP_Data_Fv  = lP_Data_Fv;
-                                mDesc       = lDesc     ;
-                            } catch (Exception e) {
-                            }
-                        }
-                    }
-
                     if (!mFilm_Data.isEmpty()) Film_Data_EditText.setText(mFilm_Data);
                     if (!mP_Data_Sv.isEmpty()) P_Data_Sv_EditText.setText(mP_Data_Sv);
                     if (!mP_Data_Ev.isEmpty()) P_Data_Ev_EditText.setText(mP_Data_Ev);
@@ -217,25 +230,28 @@ public class FragmentPlacemarkDialog extends DialogFragment implements View.OnCl
         }, 200);
 
         createPlacemarkAlert.setView(view)
-                .setPositiveButton(R.string.dlg_button_add, new DialogInterface.OnClickListener() {
+                .setPositiveButtonIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_add_location_24dp, getActivity().getTheme()))
+                .setPositiveButton(""/*R.string.dlg_button_add*/, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         if (isAdded()) {
-                            insertOrUpdate(EventBusMSG.INSERT_PLACEMARK);
+                            insertOrUpdate(EventBusMSG.INSERT_PLACEMARK, -1,-1);
                         }
                     }
                 })
-                .setNeutralButton(R.string.dlg_button_update, new DialogInterface.OnClickListener() {
+                .setNegativeButtonIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_place_24dp, getActivity().getTheme()))
+                .setNegativeButton(""/*R.string.dlg_button_update*/, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         if (isAdded()) {
-                            insertOrUpdate(EventBusMSG.UPDATE_PLACEMARK);
+                            insertOrUpdate(EventBusMSG.UPDATE_PLACEMARK, trackID, pmarkID);
                         }
                     }
                 })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                .setNeutralButtonIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_close_24, getActivity().getTheme()))
+                .setNeutralButton(""/*R.string.cancel*/, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                     }
@@ -249,7 +265,7 @@ public class FragmentPlacemarkDialog extends DialogFragment implements View.OnCl
         getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
-    private void insertOrUpdate(short message) {
+    private void insertOrUpdate(short message, long trackID, long pmarkID) {
         mFilm_Data = Film_Data_EditText.getText().toString().trim();
         mP_Data_Ev = P_Data_Ev_EditText.getText().toString().trim();
         mP_Data_Tv = P_Data_Tv_EditText.getText().toString().trim();
@@ -286,6 +302,10 @@ public class FragmentPlacemarkDialog extends DialogFragment implements View.OnCl
                         mDesc;
         final GPSApplication gpsApp = GPSApplication.getInstance();
         gpsApp.setPlacemarkDescription(placemarkDescription.trim());
-        EventBus.getDefault().post(message);
+        if ((trackID >= 0) && (pmarkID > 0)) {
+            EventBus.getDefault().post(new EventBusMSGLong(message, trackID, pmarkID));
+        } else {
+            EventBus.getDefault().post(message);
+        }
     }
 }

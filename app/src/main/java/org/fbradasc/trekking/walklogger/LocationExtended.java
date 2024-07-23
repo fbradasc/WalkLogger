@@ -39,6 +39,7 @@ public class LocationExtended {
     private int numberOfSatellitesUsedInFix = NOT_AVAILABLE;
     private int nmberOfSteps                = NONE;
     private boolean isNewPathStart          = false;
+    private long id                         = 0;
 
     /**
      * The constructor.
@@ -79,6 +80,14 @@ public class LocationExtended {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void  setId(long id) {
+        this.id = id;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public void setNumberOfSatellites(int numberOfSatellites) {

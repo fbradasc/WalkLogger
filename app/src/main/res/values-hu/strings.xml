@@ -94,7 +94,7 @@
     <string name="menu_online_help">Online súgó</string>
     <string name="menu_shutdown">Kikapcsolás</string>
     <!-- Annotation Creation dialog -->
-    <string name="dlg_add_annotation">Jegyzet hozzáadása</string>
+    <string name="dlg_add_annotation">Jegyzet</string>
     <string name="dlg_enter_the_description">Leírás</string>
     <string name="dlg_button_add">Hozzáad</string>
     <!-- Tracklist -->

@@ -94,7 +94,7 @@
     <string name="menu_online_help">Ayuda en línea</string>
     <string name="menu_shutdown">Salir</string>
     <!-- Annotation Creation dialog -->
-    <string name="dlg_add_annotation">Añadir anotación</string>
+    <string name="dlg_add_annotation">Anotación</string>
     <string name="dlg_enter_the_description">Ingresar la descripción</string>
   <string name="dlg_button_add">Añadir</string>
   <!-- Tracklist -->
